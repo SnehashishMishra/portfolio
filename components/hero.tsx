@@ -86,7 +86,7 @@ export default function Hero() {
           transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
           className="flex justify-center mx-auto cursor-pointer"
         >
-          <ChevronDown className="w-6 h-6 text-primary animate-bounce" />
+          <ChevronDown className="w-6 h-6 text-primary" />
         </motion.button>
       </div>
     </section>

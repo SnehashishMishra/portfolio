@@ -105,7 +105,7 @@ export default function Contact() {
               Let's <span className="text-primary">Connect</span>
             </h2>
             <div className="flex justify-center mb-4">
-              <div className="w-20 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+              <div className="w-20 h-1 bg-linear-to-r from-primary to-secondary rounded-full"></div>
             </div>
             <p className="text-lg text-muted-foreground">
               I'm always open to discussing new projects, creative ideas, or
@@ -203,11 +203,11 @@ export default function Contact() {
                 type="submit"
                 disabled={isSubmitting}
                 whileHover={{
-                  scale: 1.02,
-                  boxShadow: "0 20px 40px rgba(6, 182, 212, 0.3)",
+                  scale: 1.01,
+                  boxShadow: "0 10px 20px rgba(6, 182, 212, 0.3)",
                 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full px-6 py-3 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full px-6 py-3 bg-linear-to-r from-primary to-secondary text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isSubmitting ? "Sending..." : "Send Message"}
               </motion.button>

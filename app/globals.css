@@ -3,32 +3,39 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 :root {
   /* Light mode colors - Professional & Clean with soft gradients */
-  --background: #f8f9fa;
-  --foreground: #1a1a1a;
-  --card: #ffffff;
-  --card-foreground: #1a1a1a;
-  --popover: #ffffff;
-  --popover-foreground: #1a1a1a;
-  --primary: #4f46e5;
+  --background: #fef9f3;
+  --foreground: #1f1f1f;
+  --centre: #fffdfa;
+  --card: #fffbf7;
+  --card-foreground: #1f1f1f;
+  --popover: #fffbf7;
+  --popover-foreground: #1f1f1f;
+  --primary: #ff9d00;
   --primary-foreground: #ffffff;
-  --secondary: #4338ca;
+  --secondary: #fa812f;
   --secondary-foreground: #ffffff;
-  --muted: #e5e7eb;
-  --muted-foreground: #6b7280;
-  --accent: #7c3aed;
+  --muted: #e8dcc8;
+  --muted-foreground: #5f5550;
+  --accent: #c9a961;
   --accent-foreground: #ffffff;
-  --destructive: #dc2626;
+  --destructive: #d84c4c;
   --destructive-foreground: #ffffff;
-  --border: #e0e0e0;
-  --input: #f3f4f6;
-  --ring: #4f46e5;
-  --chart-1: #4f46e5;
-  --chart-2: #4338ca;
-  --chart-3: #7c3aed;
-  --chart-4: #8b5cf6;
-  --chart-5: #d946ef;
+  --border: #e5d9cc;
+  --input: #faf5f0;
+  --ring: #b8860b;
+  --chart-1: #b8860b;
+  --chart-2: #8b7355;
+  --chart-3: #c9a961;
+  --chart-4: #d4af37;
+  --chart-5: #a0826d;
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
@@ -44,6 +51,7 @@
   /* Dark mode colors - Deep blues and cyans */
   --background: #0f1419;
   --foreground: #e8ecf1;
+  --centre: #1a2332;
   --card: #1a202c;
   --card-foreground: #e8ecf1;
   --popover: #1a202c;
@@ -81,6 +89,7 @@
   --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-centre: var(--centre);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -118,22 +127,22 @@
 }
 
 @layer base {
-  * {
+  /* * {
     @apply border-border outline-ring/50;
-  }
-  body {
+  } */
+  /* body {
     @apply bg-background text-foreground transition-colors duration-300;
-  }
+  } */
 
   /* Light mode background gradient - subtle and content-friendly */
-  body:not(.dark) {
+  /* body:not(.dark) {
     background: linear-gradient(135deg, #f8f9fa 0%, #f0f4ff 50%, #faf8ff 100%);
-  }
+  } */
 
   /* Dark mode gradient - deep with cyan accent */
-  body.dark {
+  /* body.dark {
     background: linear-gradient(135deg, #0f1419 0%, #0d1820 50%, #0a1b25 100%);
-  }
+  } */
 }
 
 @keyframes float {

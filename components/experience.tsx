@@ -1,11 +1,30 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { useInView } from "react-intersection-observer"
-import { Calendar, MapPin } from "lucide-react"
+import React, { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { Calendar, MapPin } from "lucide-react";
 
 export default function Experience() {
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 })
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const timelineRef = useRef<HTMLDivElement>(null);
+
+  // observe scroll progress relative to timelineRef
+  const { scrollYProgress } = useScroll({
+    target: timelineRef,
+    offset: ["start 0.9", "end 0.4"],
+  });
+
+  // smooth the growth of the line
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 25,
+    mass: 0.6,
+  });
+
+  // beam position (as percentage from top)
+  const beamTop = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const beamTopSmooth = useSpring(beamTop, { stiffness: 120, damping: 28 });
 
   const experiences = [
     {
@@ -15,83 +34,143 @@ export default function Experience() {
       location: "Online",
       description:
         "Completed comprehensive AWS cloud training covering EC2, S3, Lambda, RDS, and other AWS services. Gained hands-on experience with cloud infrastructure and deployment.",
-      highlights: ["Cloud Architecture", "AWS Services", "Infrastructure Design", "Best Practices"],
+      highlights: [
+        "Cloud Architecture",
+        "AWS Services",
+        "EC2 & S3",
+        "Best Practices",
+      ],
     },
-  ]
+    {
+      title: "Cloud Computing (Swayam-NPTEL Certification by IIT Kharagpur)",
+      company: "AICTE & EduSkills",
+      period: "Oct – Oct 2022",
+      location: "Remote",
+      description:
+        "Completed an in-depth course on Cloud Computing, covering fundamental concepts, service models, deployment models, and hands-on labs with leading cloud platforms.",
+      highlights: [
+        "Cloud Computing",
+        "Virtualization",
+        "Best Practices",
+        "Labs",
+      ],
+    },
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.1,
+        staggerChildren: 0.12,
+        delayChildren: 0.08,
       },
     },
-  }
+  };
 
   const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.8 } },
-  }
+    hidden: { opacity: 0, y: 18 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
 
   return (
     <section id="experience" className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
       <div className="max-w-6xl mx-auto">
-        <motion.div ref={ref} variants={containerVariants} initial="hidden" animate={inView ? "visible" : "hidden"}>
-          <motion.div variants={itemVariants} className="mb-12">
+        <motion.div
+          ref={ref}
+          variants={containerVariants}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+        >
+          {/* Header */}
+          <motion.div variants={itemVariants} className="mb-16 text-center">
             <h2 className="text-4xl sm:text-5xl font-bold mb-4">
-              <span className="text-primary">Experience</span>
+              <span className="text-primary">Experience</span> Timeline
             </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+            <div className="mx-auto w-32 h-1 bg-linear-to-r from-primary to-secondary rounded-full"></div>
           </motion.div>
 
-          <div className="space-y-8">
-            {experiences.map((experience, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                whileHover={{ x: 5 }}
-                className="relative pl-8 pb-8 border-l-2 border-primary last:pb-0"
-              >
-                <div className="absolute left-0 top-0 w-4 h-4 bg-primary rounded-full transform -translate-x-2.5"></div>
+          {/* Timeline container */}
+          <div ref={timelineRef} className="relative">
+            {/* Center Line - spans full height of timeline container and grows */}
+            {/* ✅ Mobile Timeline (left side) */}
+            <motion.div
+              style={{ scaleY }}
+              className="absolute left-0 top-0 bottom-0 w-[3px] origin-top bg-gradient-to-b from-primary to-secondary rounded-full md:hidden"
+            />
 
+            {/* ✅ Desktop Timeline (center) */}
+            <motion.div
+              style={{ scaleY }}
+              className="hidden md:absolute left-1/2 top-0 bottom-0 w-[3px] origin-top -translate-x-1/2 bg-gradient-to-b from-primary to-secondary rounded-full md:block"
+            />
+
+            {/* Scroll Beam - follows progress along the line (top as percent) Shadow afrer the timeline line */}
+            {/* <motion.div
+              style={{ top: beamTopSmooth }}
+              className="absolute left-1/2 -translate-x-1/2 w-10 h-28 rounded-full bg-primary/30 dark:bg-primary/25 blur-xl mix-blend-screen z-10"
+            /> */}
+
+            <div className="space-y-16 relative z-20">
+              {experiences.map((exp, index) => (
                 <motion.div
-                  whileHover={{ boxShadow: "0 10px 30px rgba(6, 182, 212, 0.1)" }}
-                  className="p-6 rounded-lg bg-background border border-border"
+                  key={index}
+                  variants={itemVariants}
+                  className={`relative flex flex-col md:flex-row ${
+                    index % 2 === 0 ? "md:justify-start" : "md:justify-end"
+                  }`}
                 >
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
-                    <div>
-                      <h3 className="text-2xl font-bold text-foreground mb-1">{experience.title}</h3>
-                      <p className="text-primary font-semibold">{experience.company}</p>
-                    </div>
-                    <div className="mt-4 md:mt-0 space-y-1 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {experience.period}
+                  <div
+                    className={`md:w-1/2 pl-6 md:pl-0 ${
+                      index % 2 === 0 ? "md:pr-10" : "md:pl-10 md:text-right"
+                    }`}
+                  >
+                    <div className="p-6 rounded-xl bg-background border border-border shadow-sm hover:shadow-lg transition-shadow duration-300">
+                      <h3 className="text-2xl font-semibold text-foreground">
+                        {exp.title}
+                      </h3>
+                      <p className="text-primary font-medium mb-2">
+                        {exp.company}
+                      </p>
+
+                      <div className="flex flex-wrap justify-start md:justify-center lg:justify-start gap-4 text-sm text-muted-foreground mb-3">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          {exp.period}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {exp.location}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
-                        {experience.location}
+
+                      <p className="text-muted-foreground mb-4">
+                        {exp.description}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2">
+                        {exp.highlights.map((highlight, i) => (
+                          <span
+                            key={i}
+                            className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full"
+                          >
+                            {highlight}
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-muted-foreground mb-4">{experience.description}</p>
-
-                  <div className="flex flex-wrap gap-2">
-                    {experience.highlights.map((highlight, idx) => (
-                      <span key={idx} className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
-                        {highlight}
-                      </span>
-                    ))}
+                  {/* Timeline Dot - positioned exactly at the center line */}
+                  <div className="absolute md:left-1/2 left-0.5 top-6 transform md:-translate-x-1/2 -translate-x-1/2">
+                    <div className="w-5 h-5 bg-primary rounded-full border-4 border-background shadow-lg" />
                   </div>
                 </motion.div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
         </motion.div>
       </div>
     </section>
-  )
+  );
 }

@@ -63,9 +63,15 @@ export default function Navigation() {
         <motion.button
           onClick={() => scrollToSection("hero")}
           whileHover={{ scale: 1.05 }}
-          className="text-2xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent cursor-pointer"
+          className="text-2xl font-mono bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent cursor-pointer"
         >
-          S
+          {
+            <img
+              className="w-10 h-10"
+              src={theme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
+              alt="Logo"
+            />
+          }
         </motion.button>
 
         <div className="hidden md:flex gap-8">

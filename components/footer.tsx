@@ -19,7 +19,7 @@ export default function Footer() {
           transition={{ duration: 0.6 }}
           className="space-y-8"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:pl-10 md:grid-cols-3 lg:pl-30 gap-8">
             <div>
               <h3 className="font-semibold text-foreground mb-4">
                 Quick Links
