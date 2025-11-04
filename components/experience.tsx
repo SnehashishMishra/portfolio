@@ -30,7 +30,7 @@ export default function Experience() {
     {
       title: "AWS Cloud Virtual Internship",
       company: "AICTE & EduSkills",
-      period: "Jan – Mar 2025",
+      period: "Jan - Mar 2025",
       location: "Online",
       description:
         "Completed comprehensive AWS cloud training covering EC2, S3, Lambda, RDS, and other AWS services. Gained hands-on experience with cloud infrastructure and deployment.",
@@ -44,7 +44,7 @@ export default function Experience() {
     {
       title: "Cloud Computing (Swayam-NPTEL Certification by IIT Kharagpur)",
       company: "AICTE & EduSkills",
-      period: "Oct – Oct 2022",
+      period: "Oct - Oct 2022",
       location: "Remote",
       description:
         "Completed an in-depth course on Cloud Computing, covering fundamental concepts, service models, deployment models, and hands-on labs with leading cloud platforms.",
@@ -96,13 +96,13 @@ export default function Experience() {
             {/* ✅ Mobile Timeline (left side) */}
             <motion.div
               style={{ scaleY }}
-              className="absolute left-0 top-0 bottom-0 w-[3px] origin-top bg-gradient-to-b from-primary to-secondary rounded-full md:hidden"
+              className="absolute left-0 top-0 bottom-0 w-[3px] origin-top bg-linear-to-b from-primary to-secondary rounded-full md:hidden"
             />
 
             {/* ✅ Desktop Timeline (center) */}
             <motion.div
               style={{ scaleY }}
-              className="hidden md:absolute left-1/2 top-0 bottom-0 w-[3px] origin-top -translate-x-1/2 bg-gradient-to-b from-primary to-secondary rounded-full md:block"
+              className="hidden md:absolute left-1/2 top-0 bottom-0 w-[3px] origin-top -translate-x-1/2 bg-linear-to-b from-primary to-secondary rounded-full md:block"
             />
 
             {/* Scroll Beam - follows progress along the line (top as percent) Shadow afrer the timeline line */}
