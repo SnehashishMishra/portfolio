@@ -126,23 +126,17 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@layer base {
-  /* * {
-    @apply border-border outline-ring/50;
-  } */
-  /* body {
-    @apply bg-background text-foreground transition-colors duration-300;
-  } */
+.cursor-blink {
+  display: inline-block;
+  animation: blink 0.7s steps(2, start) infinite;
+  color: var(--primary);
+  font-weight: 700;
+}
 
-  /* Light mode background gradient - subtle and content-friendly */
-  /* body:not(.dark) {
-    background: linear-gradient(135deg, #f8f9fa 0%, #f0f4ff 50%, #faf8ff 100%);
-  } */
-
-  /* Dark mode gradient - deep with cyan accent */
-  /* body.dark {
-    background: linear-gradient(135deg, #0f1419 0%, #0d1820 50%, #0a1b25 100%);
-  } */
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
 }
 
 @keyframes float {

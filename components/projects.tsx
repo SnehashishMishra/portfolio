@@ -66,7 +66,7 @@ export default function Projects() {
             <h2 className="text-4xl sm:text-5xl font-bold mb-4">
               Featured <span className="text-primary">Projects</span>
             </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+            <div className="w-20 h-1 bg-linear-to-r from-primary to-secondary rounded-full"></div>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -87,7 +87,7 @@ export default function Projects() {
                     alt={project.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 </div>
 
                 <div className="p-6">
@@ -107,16 +107,16 @@ export default function Projects() {
                     ))}
                   </div>
 
-                  <div className="flex gap-3">
+                  <div className="flex justify-between gap-3">
                     <motion.a
                       href={project.github}
                       target="_blank"
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium cursor-pointer"
+                      className="flex justify-center w-full items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium cursor-pointer"
                     >
-                      <Github className="w-4 h-4" />
+                      <Github className="w-auto h-4" />
                       Code
                     </motion.a>
 
@@ -129,9 +129,9 @@ export default function Projects() {
                         boxShadow: "0 0 20px rgba(6, 182, 212, 0.4)",
                       }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-lg hover:shadow-lg transition-all text-sm font-medium cursor-pointer"
+                      className="flex justify-center w-full  items-center gap-2 px-4 py-2 bg-linear-to-r from-primary to-secondary text-primary-foreground rounded-lg hover:shadow-lg transition-all text-sm font-medium cursor-pointer"
                     >
-                      <ExternalLink className="w-4 h-4" />
+                      <ExternalLink className="w-auto h-4" />
                       Demo
                     </motion.a>
                   </div>

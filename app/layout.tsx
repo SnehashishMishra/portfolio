@@ -3,7 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
-// import "./index.css";
+import { Toaster } from "@/components/ui/toast";
+import FaviconSwitcher from "@/components/FaviconSwitcher";
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
@@ -16,7 +17,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="dark">
       <body className="font-sans antialiased bg-background text-foreground scroll-smooth">
         <ThemeProvider>
+          <FaviconSwitcher />
           {children}
+          <Toaster />
           <Analytics />
         </ThemeProvider>
       </body>
@@ -25,5 +28,8 @@ export default function RootLayout({
 }
 
 export const metadata = {
-  generator: "v0.app",
+  generator: "Snehashish Mishra",
+  icons: {
+    icon: "/logo_dark.svg",
+  },
 };
