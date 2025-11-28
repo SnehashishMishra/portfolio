@@ -31,7 +31,7 @@ export const metadata = {
   authors: [
     {
       name: "Snehashish Mishra",
-      url: "https://snehashish-portfolio.vercel.app",
+      url: "https://snehashish.is-a.dev",
     },
   ],
   creator: "Snehashish Mishra",
@@ -61,13 +61,13 @@ export const metadata = {
     title: "Snehashish Mishra | Web Developer Portfolio",
     description:
       "Hi, I'm Snehashish — a web developer crafting beautiful and performant websites using Next.js, React, and Tailwind CSS.",
-    url: "https://snehashish-portfolio.vercel.app",
+    url: "https://snehashish.is-a.dev",
     siteName: "Snehashish Mishra Portfolio",
     type: "website",
     locale: "en_IN",
     images: [
       {
-        url: "https://snehashish-portfolio.vercel.app/og-image.png",
+        url: "https://snehashish.is-a.dev/og-image.png",
         width: 1200,
         height: 630,
         alt: "Snehashish Mishra | Web Developer Portfolio",
@@ -84,12 +84,12 @@ export const metadata = {
       "Discover Snehashish's journey in web development. Clean code, modern design, and creative web experiences.",
     creator: "@snehashish_m",
     site: "@snehashish_m",
-    images: ["https://snehashish-portfolio.vercel.app/og-image.png"],
+    images: ["https://snehashish.is-a.dev/og-image.png"],
   },
 
   /* 🔗 Canonical URL */
   alternates: {
-    canonical: "https://snehashish-portfolio.vercel.app",
+    canonical: "https://snehashish.is-a.dev",
   },
 
   /* 📱 Apple + Mobile + PWA Friendly */
