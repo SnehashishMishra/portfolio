@@ -9,7 +9,7 @@ import FaviconSwitcher from "@/components/FaviconSwitcher";
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
-/* ✅ Enhanced SEO Metadata */
+/* 🚀 FULL ENHANCED SEO + SOCIAL MEDIA METADATA */
 export const metadata = {
   title: "Snehashish Mishra | Web Developer Portfolio",
   description:
@@ -25,6 +25,8 @@ export const metadata = {
     "Portfolio",
     "JavaScript",
     "Tailwind CSS",
+    "Cloud Computing",
+    "UI UX Designer",
   ],
   authors: [
     {
@@ -34,51 +36,80 @@ export const metadata = {
   ],
   creator: "Snehashish Mishra",
   publisher: "Snehashish Mishra",
-
-  /* ✅ Favicon */
-  icons: {
-    icon: "/logo_dark.svg", // dark (default)
-    shortcut: "/logo_light.svg", // light mode handled by your switcher
+  category: "Technology",
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
   },
 
-  /* ✅ Open Graph (for social sharing) */
+  icons: {
+    icon: "/logo_dark.svg",
+    shortcut: "/logo_light.svg",
+    apple: "/logo_light.svg",
+  },
+
+  /* 🟩 Universal Open Graph (used by WhatsApp, LinkedIn, Instagram, Discord, Telegram, Slack) */
   openGraph: {
     title: "Snehashish Mishra | Web Developer Portfolio",
     description:
       "Hi, I'm Snehashish — a web developer crafting beautiful and performant websites using Next.js, React, and Tailwind CSS.",
     url: "https://snehashish-portfolio.vercel.app",
     siteName: "Snehashish Mishra Portfolio",
+    type: "website",
+    locale: "en_IN",
     images: [
       {
-        url: "/og-image.png", // Place an image in /public/og-image.png
+        url: "https://snehashish-portfolio.vercel.app/og-image.png",
         width: 1200,
         height: 630,
         alt: "Snehashish Mishra | Web Developer Portfolio",
+        type: "image/png",
       },
     ],
-    locale: "en_IN",
-    type: "website",
   },
 
-  /* ✅ Twitter Card */
+  /* 🟦 Twitter (X) Card */
   twitter: {
     card: "summary_large_image",
     title: "Snehashish Mishra | Web Developer Portfolio",
     description:
       "Discover Snehashish's journey in web development. Clean code, modern design, and creative web experiences.",
-    creator: "@snehashish_m", // replace with your actual handle if any
-    images: ["/og-image.png"],
+    creator: "@snehashish_m",
+    site: "@snehashish_m",
+    images: ["https://snehashish-portfolio.vercel.app/og-image.png"],
   },
 
-  /* ✅ Canonical URL */
+  /* 🔗 Canonical URL */
   alternates: {
     canonical: "https://snehashish-portfolio.vercel.app",
   },
 
-  /* ✅ Theme color for browser tabs */
+  /* 📱 Apple + Mobile + PWA Friendly */
+  appleWebApp: {
+    capable: true,
+    title: "Snehashish Mishra Portfolio",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
+  },
+  viewport:
+    "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover",
+
+  /* 🎨 Dynamic Browser Theme Colors */
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FFD700" },
-    { media: "(prefers-color-scheme: dark)", color: "#1E1E1E" },
+    { media: "(prefers-color-scheme: dark)", color: "#0F172A" },
   ],
 };
 
