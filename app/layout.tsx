@@ -51,9 +51,9 @@ export const metadata = {
   },
 
   icons: {
-    icon: "/logo_dark.svg",
-    shortcut: "/logo_light.svg",
-    apple: "/logo_light.svg",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
 
   /* 🟩 Universal Open Graph (used by WhatsApp, LinkedIn, Instagram, Discord, Telegram, Slack) */
