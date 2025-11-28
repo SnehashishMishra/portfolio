@@ -36,27 +36,12 @@ export const metadata = {
   ],
   creator: "Snehashish Mishra",
   publisher: "Snehashish Mishra",
-  category: "Technology",
-  robots: {
-    index: true,
-    follow: true,
-    nocache: false,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-snippet": -1,
-      "max-image-preview": "large",
-      "max-video-preview": -1,
-    },
-  },
 
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: "/logo_dark.svg",
+    shortcut: "/logo_dark.svg",
   },
 
-  /* 🟩 Universal Open Graph (used by WhatsApp, LinkedIn, Instagram, Discord, Telegram, Slack) */
   openGraph: {
     title: "Snehashish Mishra | Web Developer Portfolio",
     description:
@@ -76,37 +61,39 @@ export const metadata = {
     ],
   },
 
-  /* 🟦 Twitter (X) Card */
   twitter: {
     card: "summary_large_image",
     title: "Snehashish Mishra | Web Developer Portfolio",
     description:
       "Discover Snehashish's journey in web development. Clean code, modern design, and creative web experiences.",
-    creator: "@snehashish_m",
-    site: "@snehashish_m",
+    creator: "@snehashish_mishra",
+    site: "@snehashish_mishra",
     images: ["https://snehashish.is-a.dev/og-image.png"],
   },
 
-  /* 🔗 Canonical URL */
   alternates: {
     canonical: "https://snehashish.is-a.dev",
   },
 
-  /* 📱 Apple + Mobile + PWA Friendly */
   appleWebApp: {
     capable: true,
     title: "Snehashish Mishra Portfolio",
     statusBarStyle: "black-translucent",
   },
+
   formatDetection: {
     telephone: false,
     address: false,
     email: false,
   },
-  viewport:
-    "width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover",
+};
 
-  /* 🎨 Dynamic Browser Theme Colors */
+/* ✅ Move viewport + themeColor here (required by Next.js 15+) */
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#FFD700" },
     { media: "(prefers-color-scheme: dark)", color: "#0F172A" },
@@ -115,9 +102,9 @@ export const metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning className="dark">
       <body className="font-sans antialiased bg-background text-foreground scroll-smooth">
