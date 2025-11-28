@@ -28,20 +28,6 @@ export default function Experience() {
 
   const experiences = [
     {
-      title: "AWS Cloud Virtual Internship",
-      company: "AICTE & EduSkills",
-      period: "Jan - Mar 2025",
-      location: "Online",
-      description:
-        "Completed comprehensive AWS cloud training covering EC2, S3, Lambda, RDS, and other AWS services. Gained hands-on experience with cloud infrastructure and deployment.",
-      highlights: [
-        "Cloud Architecture",
-        "AWS Services",
-        "EC2 & S3",
-        "Best Practices",
-      ],
-    },
-    {
       title: "Cloud Computing (Swayam-NPTEL Certification by IIT Kharagpur)",
       company: "AICTE & EduSkills",
       period: "Oct - Oct 2022",
@@ -53,6 +39,20 @@ export default function Experience() {
         "Virtualization",
         "Best Practices",
         "Labs",
+      ],
+    },
+    {
+      title: "AWS Cloud Virtual Internship",
+      company: "AICTE & EduSkills",
+      period: "Jan - Mar 2025",
+      location: "Online",
+      description:
+        "Completed comprehensive AWS cloud training covering EC2, S3, Lambda, RDS, and other AWS services. Gained hands-on experience with cloud infrastructure and deployment.",
+      highlights: [
+        "Cloud Architecture",
+        "AWS Services",
+        "EC2 & S3",
+        "Best Practices",
       ],
     },
   ];

@@ -9,32 +9,32 @@ export default function Projects() {
 
   const projects = [
     {
-      title: "E-Commerce Website",
+      title: "Ether ML",
       description:
-        "Full-stack e-commerce platform built with MERN stack. Features product browsing, shopping cart, secure checkout, and admin dashboard.",
-      tech: ["React", "Node.js", "MongoDB", "Stripe", "Redux"],
-      image: "/ecommerce-dashboard.jpg",
-      github: "https://github.com/SnehashishMishra/annapurna_agency",
-      demo: "https://annapurnaagency.vercel.app",
+        "A full-stack machine learning platform where users upload datasets, automatically train multiple models, compare results in real time, and download the best performing model through an interactive dashboard.",
+      tech: ["Next.js", "FastAPI", "Python", "Scikit-learn", "MongoDB"],
+      image: "/etherml-landing-page.png",
+      github: "https://github.com/SnehashishMishra/MLModels-frontend",
+      demo: "https://etherml.vercel.app",
     },
     {
       title: "E-Notes App",
       description:
         "A modern note-taking application with real-time synchronization, cloud storage, and rich text editing capabilities.",
       tech: ["React", "MongoDB", "Express.JS", "Tailwind CSS"],
-      image: "/notes-app-interface.jpg",
+      image: "/enotes-landing-page.png",
       github: "https://github.com/SnehashishMishra/eNotes",
       demo: "https://enotesapp.vercel.app",
     },
-    // {
-    //   title: "3D Animated Website",
-    //   description:
-    //     "Interactive website featuring 3D animations and smooth transitions. Showcases advanced CSS animations and Framer Motion techniques.",
-    //   tech: ["Next.js", "Three.js", "Framer Motion", "Tailwind CSS"],
-    //   image: "/3d-animated-website.jpg",
-    //   github: "https://github.com",
-    //   demo: "https://github.com",
-    // },
+    {
+      title: "E-Commerce Website",
+      description:
+        "Full-stack e-commerce platform built with MERN stack. Features product browsing, shopping cart, secure checkout, and admin dashboard.",
+      tech: ["Next.js", "Node.js", "MongoDB", "Stripe", "Redux"],
+      image: "/ecommerce-landing-page.png",
+      github: "https://github.com/SnehashishMishra/annapurna_agency",
+      demo: "https://annapurnaagency.vercel.app",
+    },
   ];
 
   const containerVariants = {
