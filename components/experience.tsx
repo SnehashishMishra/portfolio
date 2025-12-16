@@ -42,6 +42,21 @@ export default function Experience() {
       ],
     },
     {
+      title: "Freelance Frontend Developer",
+      company: "Ravi Pankha (India) Private Limited",
+      period: "Jan - Apr 2024",
+      location: "Remote",
+      description:
+        "Developed and deployed a dynamic web solution using React.js, Tailwind CSS, and Sanity.io, ensuring responsive UI and scalable backend integrations. Collaborated remotely with clients to deliver business-oriented features.",
+      highlights: [
+        "React.js",
+        "Tailwind CSS",
+        "Sanity.io",
+        "Git",
+        "AWS Deployment",
+      ],
+    },
+    {
       title: "AWS Cloud Virtual Internship",
       company: "AICTE & EduSkills",
       period: "Jan - Mar 2025",
@@ -122,7 +137,7 @@ export default function Experience() {
                 >
                   <div
                     className={`md:w-1/2 pl-6 md:pl-0 ${
-                      index % 2 === 0 ? "md:pr-10" : "md:pl-10 md:text-right"
+                      index % 2 === 0 ? "md:pr-10" : "md:pl-10 md:text-left"
                     }`}
                   >
                     <div className="p-6 rounded-xl bg-background border border-border shadow-sm hover:shadow-lg transition-shadow duration-300">

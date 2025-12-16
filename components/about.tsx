@@ -64,10 +64,10 @@ export default function About() {
               className="grid grid-cols-2 gap-4"
             >
               {[
-                { label: "Projects", value: "5+" },
+                { label: "Projects", value: "3+" },
                 { label: "Years Learning", value: "2+" },
                 { label: "Technologies", value: "15+" },
-                { label: "Internships", value: "1" },
+                { label: "Freelance Project", value: "1" },
               ].map((stat, index) => (
                 <motion.div
                   key={index}
