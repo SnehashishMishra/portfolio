@@ -1,0 +1,165 @@
+---
+title: "Prettier + Tailwind CSS Plugin — Legacy Setup (prettier-plugin-tailwindcss ^0.7.2)"
+description:
+  "A stable fallback setup for Prettier with import sorting and Tailwind class
+  sorting using older, pinned plugin versions — no Object.create patch needed.
+  Use this if the latest version setup fails for your project."
+image: "/Images/blog/prettier-tailwind.png"
+date: 2026-04-28
+---
+
+# Prettier + Tailwind CSS Plugin — Legacy Setup (prettier-plugin-tailwindcss ^0.7.2)
+
+If the latest plugin version causes issues in your project, this guide documents
+a confirmed-working **legacy setup** using pinned, older versions of
+`prettier-plugin-tailwindcss` and `@ianvs/prettier-plugin-sort-imports`. No
+`Object.create` patch is needed here — the older API is simpler and more
+forgiving.
+
+> 💡 **Looking for the latest version setup instead?**  
+> Head over to the [**Latest Version Setup Guide**](/blogs/prettier-setup-guide-for_latest_tailwind_plugin_version) which
+> uses `prettier-plugin-tailwindcss ^0.8.0` with the `Object.create` fix.
+
+---
+
+## Why Use the Legacy Version?
+
+`prettier-plugin-tailwindcss` changed its internal plugin-chaining mechanism
+in `v0.8.0`. If you:
+
+- Are on an older project that you don't want to upgrade
+- Hit silent failures with the newer versions on VS Code save
+- Can't resolve the `Object.create` `.name` patch for your plugin combination
+
+…then pinning to `^0.7.2` is the safest fallback.
+
+## Confirmed Working Versions
+
+| Package                               | Version  |
+| ------------------------------------- | -------- |
+| `prettier`                            | `^3.8.3` |
+| `@ianvs/prettier-plugin-sort-imports` | `^4.4.0` |
+| `prettier-plugin-tailwindcss`         | `^0.7.2` |
+
+> ⚠️ **Do NOT upgrade `prettier-plugin-tailwindcss` beyond `^0.7.2`** in this
+> setup — it will break import sorting on VS Code save without additional
+> patching.
+
+---
+
+## Step 1: Install the Pinned Dependencies
+
+```bash
+npm install -D prettier@^3.8.3 @ianvs/prettier-plugin-sort-imports@^4.4.0 prettier-plugin-tailwindcss@^0.7.2
+```
+
+This installs exact major ranges. Using `@` pins the install to your specified
+versions so future `npm install` runs won't unexpectedly upgrade them.
+
+---
+
+## Step 2: Create `.prettierrc`
+
+Create a `.prettierrc` file in your project root:
+
+```json
+{
+  "plugins": [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+
+  "importOrder": [
+    "^react$",
+    "^next(/.*)?$",
+    "<THIRD_PARTY_MODULES>",
+    "",
+
+    "^@/components/ui/(.*)$",
+    "^@/components/(.*)$",
+
+    "^@/hooks/(.*)$",
+    "^@/lib/(.*)$",
+    "^@/utils/(.*)$",
+    "^@/types/(.*)$",
+    "^@/(.*)$",
+
+    "",
+
+    "^[./]"
+  ],
+
+  "importOrderTypeScriptVersion": "5.0.0",
+  "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"]
+}
+```
+
+> **Why plugin names as strings?**  
+> In `prettier-plugin-tailwindcss ^0.7.x`, passing plugin names as strings is
+> the supported approach. The version `^0.8.0+` changed this, requiring the
+> `Object.create` patch. With strings, Prettier resolves the plugins from
+> `node_modules` automatically — simpler and less error-prone.
+
+> ⚠️ **If you have an existing `prettier.config.js` or `prettier.config.mjs`**,
+> delete it first — multiple config files cause Prettier to behave unpredictably.
+
+---
+
+## Step 3: VS Code Settings
+
+Add to your **project-level** `.vscode/settings.json` (create it if it doesn't
+exist):
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
+```
+
+Make sure you have the **Prettier — Code formatter** VS Code extension installed
+(`esbenp.prettier-vscode`).
+
+---
+
+## Step 4: Verify It Works
+
+Open any `.tsx` file, scramble the import order, then hit Save. Both should
+happen at once:
+
+- ✅ Imports are sorted and grouped by the `importOrder` pattern
+- ✅ Tailwind classes are reordered to the canonical order
+
+You can also verify from the terminal:
+
+```bash
+npx prettier --write components/test-prettier.tsx
+```
+
+---
+
+## Troubleshooting
+
+| Symptom                                          | Likely Cause                              | Fix                                                                                     |
+| ------------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------------- |
+| Imports don't sort on save, but work in terminal | Plugin version too new (≥ 0.8.0)          | Downgrade to `prettier-plugin-tailwindcss@^0.7.2`                                      |
+| Tailwind classes sort but imports don't          | Plugin order wrong                        | Put `@ianvs/prettier-plugin-sort-imports` **before** `prettier-plugin-tailwindcss`      |
+| Prettier crashes on `.tsx` files                 | Missing parser plugins                    | Ensure `importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"]` is set   |
+| Nothing formats on save                          | VS Code not using project Prettier        | Check `.vscode/settings.json` has `"editor.defaultFormatter": "esbenp.prettier-vscode"` |
+| Both plugins conflict on upgrade                 | `prettier-plugin-tailwindcss` ≥ 0.8.0    | Either stay on `^0.7.2` or switch to the [latest version guide](/blogs/prettier-setup-guide-for_latest_tailwind_plugin_version) |
+
+---
+
+## Conclusion
+
+The legacy `^0.7.2` setup avoids the `.name` chaining requirement entirely —
+making it the go-to fallback when the newer `Object.create` patch approach
+doesn't suit your project. Pin your versions, use string-based plugin references,
+and you'll have a stable formatter that works reliably on every VS Code save.
+
+---
+
+> 🔗 **Want to use the latest versions instead?**  
+> Check out the [**Latest Version Setup Guide**](/blogs/prettier-setup-guide-for_latest_tailwind_plugin_version)
+> using `prettier-plugin-tailwindcss ^0.8.0` with the `Object.create` fix for
+> full compatibility with the newest Prettier ecosystem.

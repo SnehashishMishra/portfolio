@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { ExternalLink, Github } from "lucide-react";
+import { motion, Variants } from "motion/react";
+import { useInView } from "react-intersection-observer";
 
 export default function Projects() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
@@ -37,25 +37,30 @@ export default function Projects() {
     },
   ];
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
         staggerChildren: 0.2,
         delayChildren: 0.1,
+        ease: "easeInOut",
       },
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3, ease: "easeInOut" },
+    },
   };
 
   return (
-    <section id="projects" className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
+    <section id="projects" className="relative px-4 py-20 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
         <motion.div
           ref={ref}
           variants={containerVariants}
@@ -63,44 +68,44 @@ export default function Projects() {
           animate={inView ? "visible" : "hidden"}
         >
           <motion.div variants={itemVariants} className="mb-12">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+            <h2 className="mb-4 text-4xl font-bold sm:text-5xl">
               Featured <span className="text-primary">Projects</span>
             </h2>
-            <div className="w-20 h-1 bg-linear-to-r from-primary to-secondary rounded-full"></div>
+            <div className="from-primary to-secondary h-1 w-20 rounded-full bg-linear-to-r"></div>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {projects.map((project, index) => (
               <motion.div
                 key={index}
                 variants={itemVariants}
                 whileHover={{
-                  y: -10,
+                  y: -5,
                   boxShadow: "0 20px 40px rgba(6, 182, 212, 0.15)",
                 }}
-                className="group overflow-hidden rounded-lg bg-card border border-border hover:border-primary transition-all"
+                className="group bg-card border-border hover:border-primary overflow-hidden rounded-lg border transition-all"
               >
-                <div className="relative h-48 overflow-hidden bg-muted">
+                <div className="bg-muted relative h-48 overflow-hidden">
                   <motion.img
                     whileHover={{ scale: 1.05 }}
                     src={project.image}
                     alt={project.title}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="from-background/80 absolute inset-0 bg-linear-to-t to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-4">
+                  <h3 className="mb-2 text-xl font-bold">{project.title}</h3>
+                  <p className="text-muted-foreground mb-4 text-sm">
                     {project.description}
                   </p>
 
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="mb-4 flex flex-wrap gap-2">
                     {project.tech.map((tech, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full"
+                        className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium"
                       >
                         {tech}
                       </span>
@@ -114,9 +119,9 @@ export default function Projects() {
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex justify-center w-full items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium cursor-pointer"
+                      className="bg-primary/10 text-primary hover:bg-primary/20 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors"
                     >
-                      <Github className="w-auto h-4" />
+                      <Github className="h-4 w-auto" />
                       Code
                     </motion.a>
 
@@ -129,9 +134,9 @@ export default function Projects() {
                         boxShadow: "0 0 20px rgba(6, 182, 212, 0.4)",
                       }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex justify-center w-full  items-center gap-2 px-4 py-2 bg-linear-to-r from-primary to-secondary text-primary-foreground rounded-lg hover:shadow-lg transition-all text-sm font-medium cursor-pointer"
+                      className="from-primary to-secondary text-primary-foreground flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-linear-to-r px-4 py-2 text-sm font-medium transition-all hover:shadow-lg"
                     >
-                      <ExternalLink className="w-auto h-4" />
+                      <ExternalLink className="h-4 w-auto" />
                       Demo
                     </motion.a>
                   </div>

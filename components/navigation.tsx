@@ -1,25 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Moon, Sun, Download, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { Download, Menu, Moon, Sun, X } from "lucide-react";
+import { motion } from "motion/react";
+import { Link } from "next-view-transitions";
+
 import { useTheme } from "./theme-provider";
+
+const NAV_ITEMS = [
+  "hero",
+  "about",
+  "skills",
+  "projects",
+  "experience",
+  "contact",
+  "blogs",
+];
 
 export default function Navigation() {
   const [isActive, setIsActive] = useState("hero");
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
+  const router = useRouter();
 
+  // Lock/unlock body scroll when mobile menu is open
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden"; // disable scroll
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = ""; // enable scroll back
+      document.body.style.overflow = "";
     }
   }, [isOpen]);
 
+  // Detect active section via scroll (only on home page)
   useEffect(() => {
+    const isOnBlogsPage =
+      pathname === "/blogs" || pathname.startsWith("/blogs/");
+
+    if (isOnBlogsPage) {
+      setIsActive("blogs");
+      return; // skip scroll listener on blogs pages
+    }
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
@@ -40,13 +65,35 @@ export default function Navigation() {
       if (current) setIsActive(current);
     };
 
+    // Run once on mount to set initial active state
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [pathname]);
+
+  // Also track scrolled state on blogs pages
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    element?.scrollIntoView({ behavior: "smooth" });
+  /**
+   * Handles navigation for non-blog items.
+   * - If already on home page: smooth-scroll to the section.
+   * - If on /blogs (or sub-page): navigate to home, then scroll after mount.
+   */
+  const handleSectionNav = (sectionId: string) => {
+    const isOnBlogsPage =
+      pathname === "/blogs" || pathname.startsWith("/blogs/");
+
+    if (isOnBlogsPage) {
+      // Navigate to home with a hash; the browser + scroll-smooth will handle it
+      router.push(`/#${sectionId}`);
+    } else {
+      const element = document.getElementById(sectionId);
+      element?.scrollIntoView({ behavior: "auto" });
+    }
   };
 
   const downloadResume = () => {
@@ -58,65 +105,93 @@ export default function Navigation() {
     document.body.removeChild(link);
   };
 
+  const renderNavItem = (item: string, isMobile = false) => {
+    const isBlogs = item === "blogs";
+    const isItemActive = isActive === item;
+    const label = item.charAt(0).toUpperCase() + item.slice(1);
+    const commonClass = isMobile
+      ? "relative text-lg tracking-wide font-semibold text-muted-foreground hover:text-primary transition-colors"
+      : "relative text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer";
+
+    const underline = (
+      <motion.div
+        className="from-primary to-secondary absolute right-0 bottom-0 left-0 h-0.5 origin-center bg-linear-to-r"
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={{
+          scaleX: isItemActive ? 1 : 0,
+          opacity: isItemActive ? 1 : 0,
+        }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+      />
+    );
+
+    if (isBlogs) {
+      return (
+        <Link
+          key={item}
+          href="/blogs"
+          onClick={() => isMobile && setIsOpen(false)}
+          className={commonClass}
+        >
+          {label}
+          {underline}
+        </Link>
+      );
+    }
+
+    return (
+      <button
+        key={item}
+        onClick={() => {
+          handleSectionNav(item);
+          if (isMobile) setIsOpen(false);
+        }}
+        className={commonClass}
+      >
+        {label}
+        {underline}
+      </button>
+    );
+  };
+
   return (
     <>
       {/* ✅ Main Navbar */}
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
           isScrolled ? "bg-background/80 backdrop-blur-lg" : "bg-transparent"
         }`}
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           {/* LOGO */}
-          <motion.button
-            onClick={() => scrollToSection("hero")}
+          <motion.div
+            onClick={() => handleSectionNav("hero")}
             whileHover={{ scale: 1.05 }}
             className="cursor-pointer"
           >
             <img
-              className="w-8 h-8"
+              className="h-8 w-8"
               src={theme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
               alt="Logo"
             />
-          </motion.button>
+          </motion.div>
 
           {/* DESKTOP NAV */}
-          <div className="hidden md:flex gap-8">
-            {[
-              "hero",
-              "about",
-              "skills",
-              "projects",
-              "experience",
-              "contact",
-            ].map((item) => (
-              <button
-                key={item}
-                onClick={() => scrollToSection(item)}
-                className="relative text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
-                {isActive === item && (
-                  <motion.div
-                    layoutId="underline"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-linear-to-r from-primary to-secondary"
-                  />
-                )}
-              </button>
-            ))}
+          <div className="relative hidden gap-8 md:flex">
+            {NAV_ITEMS.map((item) => renderNavItem(item, false))}
           </div>
 
           {/* DESKTOP BUTTONS */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden items-center gap-3 md:flex">
             <motion.button
               onClick={downloadResume}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary hover:bg-primary/20 text-sm font-medium transition-all border border-primary/20 hover:border-primary/40 sm:flex hidden"
+              className="bg-primary/10 text-primary hover:bg-primary/20 border-primary/20 hover:border-primary/40 hidden cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all sm:flex"
             >
-              <Download className="w-4 h-4" />
+              <Download className="h-4 w-4" />
               Resume
             </motion.button>
 
@@ -124,18 +199,18 @@ export default function Navigation() {
               onClick={toggleTheme}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="p-2 rounded-full bg-muted hover:bg-muted/80 text-foreground transition-all border border-border hover:border-primary/40"
+              className="bg-primary/10 hover:bg-primary/20 text-foreground border-primary/20 hover:border-primary/40 cursor-pointer rounded-full border p-2 transition-all"
             >
               {theme === "dark" ? (
-                <Sun className="w-5 h-5" />
+                <Sun className="h-5 w-5" />
               ) : (
-                <Moon className="w-5 h-5" />
+                <Moon className="h-5 w-5" />
               )}
             </motion.button>
           </div>
 
           {/* HAMBURGER BUTTON */}
-          <button className="md:hidden block" onClick={() => setIsOpen(true)}>
+          <button className="block md:hidden" onClick={() => setIsOpen(true)}>
             <motion.div whileHover={{ scale: 1.1 }}>
               <Menu />
             </motion.div>
@@ -149,19 +224,14 @@ export default function Navigation() {
         animate={isOpen ? { x: 0, opacity: 1 } : { x: "100%", opacity: 0 }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
         style={{ backgroundColor: "var(--background)" }}
-        className={`
-        fixed inset-0 z-9999 md:hidden
-        bg-background/60 backdrop-blur-3xl shadow-2xl
-        border-l border-border
-        ${isOpen ? "pointer-events-auto" : "pointer-events-none"}
-      `}
+        className={`bg-background/60 border-border fixed inset-0 z-9999 border-l shadow-2xl backdrop-blur-3xl md:hidden ${isOpen ? "pointer-events-auto" : "pointer-events-none"} `}
       >
         {/* CLOSE BUTTON */}
         <motion.button
           onClick={() => setIsOpen(false)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="absolute top-5 right-4 text-foreground hover:text-primary transition-colors text-2xl"
+          className="text-foreground hover:text-primary absolute top-5 right-4 text-2xl transition-colors"
         >
           <X />
         </motion.button>
@@ -171,27 +241,20 @@ export default function Navigation() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : 10 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex flex-col justify-center items-center h-full gap-6"
+          className="flex h-full flex-col items-center justify-center gap-6"
         >
-          {["hero", "about", "skills", "projects", "experience", "contact"].map(
-            (item, index) => (
-              <motion.button
-                key={item}
-                onClick={() => {
-                  scrollToSection(item);
-                  setIsOpen(false);
-                }}
-                initial={{ opacity: 0, x: 20 }}
-                animate={isOpen ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.3, delay: index * 0.07 }}
-                className="text-lg tracking-wide font-semibold text-muted-foreground hover:text-primary transition-colors"
-              >
-                {item.charAt(0).toUpperCase() + item.slice(1)}
-              </motion.button>
-            )
-          )}
+          {NAV_ITEMS.map((item, index) => (
+            <motion.div
+              key={item}
+              initial={{ opacity: 0, x: 20 }}
+              animate={isOpen ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.3, delay: index * 0.07 }}
+            >
+              {renderNavItem(item, true)}
+            </motion.div>
+          ))}
 
-          <div className="w-32 h-px bg-border my-4"></div>
+          <div className="bg-border my-4 h-px w-32"></div>
 
           <motion.button
             onClick={() => {
@@ -200,7 +263,7 @@ export default function Navigation() {
             }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-40 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition-all font-medium"
+            className="bg-primary/10 text-primary border-primary/30 hover:bg-primary/20 w-40 rounded-full border px-4 py-2 font-medium transition-all"
           >
             Resume
           </motion.button>
@@ -212,7 +275,7 @@ export default function Navigation() {
             }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="w-40 px-4 py-2 rounded-full bg-muted text-foreground hover:bg-muted/80 border border-border transition-all font-medium"
+            className="bg-muted text-foreground hover:bg-muted/80 border-border w-40 rounded-full border px-4 py-2 font-medium transition-all"
           >
             {theme === "dark" ? "Light Mode" : "Dark Mode"}
           </motion.button>

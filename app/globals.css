@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -11,7 +12,11 @@
 
 :root {
   /* Light mode colors - Professional & Clean with soft gradients */
+  --primary-blog: #fa812f;
+  --secondary-blog: var(--color-neutral-900);
+  --tertiary-blog: var(--color-gray-900);
   --background: #fef9f3;
+  --background-container: #fbf5ed;
   --foreground: #1f1f1f;
   --centre: #fffdfa;
   --card: #fffbf7;
@@ -49,7 +54,11 @@
 
 .dark {
   /* Dark mode colors - Deep blues and cyans */
+  --primary-blog: #06b6d4;
+  --secondary-blog: var(--color-gray-300);
+  --tertiary-blog: var(--color-gray-300);
   --background: #0f1419;
+  --background-container: #12181d;
   --foreground: #e8ecf1;
   --centre: #1a2332;
   --card: #1a202c;
@@ -85,9 +94,13 @@
 }
 
 @theme inline {
+  --color-primary-blog: var(--primary-blog);
+  --color-secondary-blog: var(--secondary-blog);
+  --color-tertiary-blog: var(--tertiary-blog);
   --font-sans: "Geist", "Geist Fallback";
   --font-mono: "Geist Mono", "Geist Mono Fallback";
   --color-background: var(--background);
+  --color-background-container: var(--background-container);
   --color-foreground: var(--foreground);
   --color-centre: var(--centre);
   --color-card: var(--card);
@@ -159,6 +172,22 @@
   }
 }
 
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  opacity: 0;
+  animation: fade-up 0.5s ease-out forwards;
+}
+
 .dark {
   @keyframes glow {
     0%,
@@ -191,6 +220,13 @@
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+@utility motion-bg {
+  background-color: transparent !important;
+  background-image: radial-gradient(transparent 1px, #000 1px) !important;
+  background-size: 4px 4px !important;
+  backdrop-filter: brightness(1) blur(10px);
 }
 
 .animate-float {

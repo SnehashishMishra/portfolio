@@ -1,18 +1,17 @@
 "use client";
 
-import React, { useRef } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useInView } from "react-intersection-observer";
+import { useRef } from "react";
 import { Calendar, MapPin } from "lucide-react";
+import { motion, useScroll, useSpring } from "motion/react";
+import { useInView } from "react-intersection-observer";
 
 export default function Experience() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const timelineRef = useRef<HTMLDivElement>(null);
 
-  // observe scroll progress relative to timelineRef
   const { scrollYProgress } = useScroll({
     target: timelineRef,
-    offset: ["start 0.9", "end 0.4"],
+    offset: ["start 0.9", "end 0.745"],
   });
 
   // smooth the growth of the line
@@ -23,8 +22,8 @@ export default function Experience() {
   });
 
   // beam position (as percentage from top)
-  const beamTop = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-  const beamTopSmooth = useSpring(beamTop, { stiffness: 120, damping: 28 });
+  // const beamTop = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  // const beamTopSmooth = useSpring(beamTop, { stiffness: 120, damping: 28 });
 
   const experiences = [
     {
@@ -89,8 +88,11 @@ export default function Experience() {
   };
 
   return (
-    <section id="experience" className="py-20 px-4 sm:px-6 lg:px-8 bg-card/30">
-      <div className="max-w-6xl mx-auto">
+    <section
+      id="experience"
+      className="bg-card/30 relative px-4 py-20 sm:px-6 lg:px-8"
+    >
+      <div className="mx-auto max-w-6xl">
         <motion.div
           ref={ref}
           variants={containerVariants}
@@ -99,10 +101,10 @@ export default function Experience() {
         >
           {/* Header */}
           <motion.div variants={itemVariants} className="mb-16 text-center">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+            <h2 className="mb-4 text-4xl font-bold sm:text-5xl">
               <span className="text-primary">Experience</span> Timeline
             </h2>
-            <div className="mx-auto w-32 h-1 bg-linear-to-r from-primary to-secondary rounded-full"></div>
+            <div className="from-primary to-secondary mx-auto h-1 w-32 rounded-full bg-linear-to-r"></div>
           </motion.div>
 
           {/* Timeline container */}
@@ -111,13 +113,13 @@ export default function Experience() {
             {/* ✅ Mobile Timeline (left side) */}
             <motion.div
               style={{ scaleY }}
-              className="absolute left-0 top-0 bottom-0 w-[3px] origin-top bg-linear-to-b from-primary to-secondary rounded-full md:hidden"
+              className="from-primary to-secondary absolute top-0 bottom-0 left-0 w-0.75 origin-top rounded-full bg-linear-to-b md:hidden"
             />
 
             {/* ✅ Desktop Timeline (center) */}
             <motion.div
               style={{ scaleY }}
-              className="hidden md:absolute left-1/2 top-0 bottom-0 w-[3px] origin-top -translate-x-1/2 bg-linear-to-b from-primary to-secondary rounded-full md:block"
+              className="from-primary to-secondary top-0 bottom-0 left-1/2 hidden w-0.75 origin-top -translate-x-1/2 rounded-full bg-linear-to-b md:absolute md:block"
             />
 
             {/* Scroll Beam - follows progress along the line (top as percent) Shadow afrer the timeline line */}
@@ -126,7 +128,7 @@ export default function Experience() {
               className="absolute left-1/2 -translate-x-1/2 w-10 h-28 rounded-full bg-primary/30 dark:bg-primary/25 blur-xl mix-blend-screen z-10"
             /> */}
 
-            <div className="space-y-16 relative z-20">
+            <div className="relative z-20 space-y-16">
               {experiences.map((exp, index) => (
                 <motion.div
                   key={index}
@@ -136,25 +138,25 @@ export default function Experience() {
                   }`}
                 >
                   <div
-                    className={`md:w-1/2 pl-6 md:pl-0 ${
+                    className={`pl-6 md:w-1/2 md:pl-0 ${
                       index % 2 === 0 ? "md:pr-10" : "md:pl-10 md:text-left"
                     }`}
                   >
-                    <div className="p-6 rounded-xl bg-background border border-border shadow-sm hover:shadow-lg transition-shadow duration-300">
-                      <h3 className="text-2xl font-semibold text-foreground">
+                    <div className="bg-background border-border rounded-xl border p-6 shadow-sm transition-shadow duration-300 hover:shadow-lg">
+                      <h3 className="text-foreground text-2xl font-semibold">
                         {exp.title}
                       </h3>
-                      <p className="text-primary font-medium mb-2">
+                      <p className="text-primary mb-2 font-medium">
                         {exp.company}
                       </p>
 
-                      <div className="flex flex-wrap justify-start md:justify-center lg:justify-start gap-4 text-sm text-muted-foreground mb-3">
+                      <div className="text-muted-foreground mb-3 flex flex-wrap justify-start gap-4 text-sm md:justify-center lg:justify-start">
                         <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
+                          <Calendar className="h-4 w-4" />
                           {exp.period}
                         </div>
                         <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
+                          <MapPin className="h-4 w-4" />
                           {exp.location}
                         </div>
                       </div>
@@ -167,7 +169,7 @@ export default function Experience() {
                         {exp.highlights.map((highlight, i) => (
                           <span
                             key={i}
-                            className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full"
+                            className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium"
                           >
                             {highlight}
                           </span>
@@ -177,8 +179,8 @@ export default function Experience() {
                   </div>
 
                   {/* Timeline Dot - positioned exactly at the center line */}
-                  <div className="absolute md:left-1/2 left-0.5 top-6 transform md:-translate-x-1/2 -translate-x-1/2">
-                    <div className="w-5 h-5 bg-primary rounded-full border-4 border-background shadow-lg" />
+                  <div className="absolute top-6 left-0.5 -translate-x-1/2 transform md:left-1/2 md:-translate-x-1/2">
+                    <div className="bg-primary border-background h-5 w-5 rounded-full border-4 shadow-lg" />
                   </div>
                 </motion.div>
               ))}

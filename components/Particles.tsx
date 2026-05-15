@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Renderer, Camera, Geometry, Program, Mesh } from "ogl";
+import { Camera, Geometry, Mesh, Program, Renderer } from "ogl";
 
 interface ParticlesProps {
   particleCount?: number;
@@ -169,7 +169,7 @@ const Particles: React.FC<ParticlesProps> = ({
       positions.set([x * r, y * r, z * r], i * 3);
       randoms.set(
         [Math.random(), Math.random(), Math.random(), Math.random()],
-        i * 4
+        i * 4,
       );
       const col = hexToRgb(palette[Math.floor(Math.random() * palette.length)]);
       colors.set(col, i * 3);
@@ -254,7 +254,7 @@ const Particles: React.FC<ParticlesProps> = ({
   ]);
 
   return (
-    <div ref={containerRef} className={`relative w-full h-full ${className}`} />
+    <div ref={containerRef} className={`relative h-full w-full ${className}`} />
   );
 };
 

@@ -1,10 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ChevronDown, Mail, Linkedin, Github } from "lucide-react";
-import Particles from "./Particles";
-import { useTheme } from "@/components/theme-provider";
+import { ChevronDown, Github, Linkedin, Mail } from "lucide-react";
+import { motion } from "motion/react";
 import { TypeAnimation } from "react-type-animation";
+
+import { useTheme } from "@/components/theme-provider";
+
+import Particles from "./Particles";
 
 export default function Hero() {
   const { theme } = useTheme();
@@ -50,12 +52,12 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen w-full flex items-center justify-center overflow-hidden pt-20 px-4 sm:px-6 lg:px-8"
+      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden px-4 pt-20 sm:px-6 lg:px-8"
     >
       <div className="absolute inset-0 z-0">
         <Particles
           key={theme}
-          className="w-full h-full"
+          className="h-full w-full"
           particleCount={220}
           particleSpread={12}
           speed={0.12}
@@ -70,17 +72,17 @@ export default function Hero() {
         />
       </div>
 
-      <div className="max-w-4xl mx-auto text-center relative z-10">
+      <div className="relative z-10 mx-auto max-w-4xl text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="mb-6"
         >
-          <div className="text-lg font-semibold text-primary mb-4">
+          <div className="text-primary mb-4 text-lg font-semibold">
             Welcome to my portfolio
           </div>
-          <h1 className="text-4xl sm:text-7xl font-bold mb-4">
+          <h1 className="mb-4 text-4xl font-bold sm:text-7xl">
             <TypeAnimation
               sequence={[
                 "Snehashish",
@@ -97,7 +99,7 @@ export default function Hero() {
               repeat={Infinity}
               deletionSpeed={10}
               cursor={false}
-              className="bg-linear-to-r from-primary via-secondary to-primary bg-clip-text text-transparent inline-block"
+              className="from-primary via-secondary to-primary inline-block bg-linear-to-r bg-clip-text text-transparent"
             />
             {/* <span className="cursor-blink">|</span> */}
           </h1>
@@ -109,10 +111,10 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mb-8"
         >
-          <h2 className="text-xl sm:text-2xl text-muted-foreground mb-4">
-            Aspiring Web Developer | MERN Stack | Cloud Enthusiast
+          <h2 className="text-muted-foreground mb-4 text-xl sm:text-2xl">
+            Web Developer | MERN Stack | Cloud Enthusiast
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground mx-auto max-w-2xl text-base sm:text-lg">
             Passionate about building modern web experiences with React,
             Next.js, and animated interactions. Currently pursuing a Master's
             degree at SRMIST, Chennai.
@@ -123,16 +125,17 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-12 justify-center mt-12 mb-7 sm:mb-12"
+          className="mt-12 mb-7 flex flex-col justify-center gap-12 sm:mb-12 sm:flex-row"
         >
           <motion.button
             onClick={scrollToProjects}
             whileHover={{
-              scale: 1.05,
+              scale: 1.03,
               boxShadow: "0 0 20px rgba(6, 182, 212, 0.4)",
             }}
             whileTap={{ scale: 0.95 }}
-            className="px-6 py-2 sm:px-8 sm:py-3 bg-linear-to-r from-primary to-secondary text-primary-foreground rounded-full font-semibold hover:shadow-lg transition-all cursor-pointer"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="from-primary to-secondary text-primary-foreground cursor-pointer rounded-full bg-linear-to-r px-6 py-2 font-semibold transition-all hover:shadow-lg sm:px-8 sm:py-3"
           >
             Explore My Work
           </motion.button>
@@ -157,9 +160,9 @@ export default function Hero() {
                   }
                   whileHover={{ scale: 1.2, rotate: 360 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`p-3 rounded-full bg-card border border-border transition-colors hover:border-primary ${link.color} cursor-pointer`}
+                  className={`bg-card border-border hover:border-primary rounded-full border p-3 transition-colors ${link.color} cursor-pointer`}
                 >
-                  <link.icon className="w-6 h-6" />
+                  <link.icon className="h-6 w-6" />
                 </motion.button>
               ) : (
                 <motion.a
@@ -169,9 +172,9 @@ export default function Hero() {
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.2, rotate: 360 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`p-3 rounded-full bg-card border border-border transition-colors hover:border-primary ${link.color} cursor-pointer`}
+                  className={`bg-card border-border hover:border-primary rounded-full border p-3 transition-colors ${link.color} cursor-pointer`}
                 >
-                  <link.icon className="w-6 h-6" />
+                  <link.icon className="h-6 w-6" />
                 </motion.a>
               );
             })}
@@ -182,9 +185,9 @@ export default function Hero() {
           onClick={scrollToAbout}
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="flex justify-center mx-auto mt-10 cursor-pointer"
+          className="mx-auto my-5 flex cursor-pointer justify-center"
         >
-          <ChevronDown className="w-6 h-6 text-primary" />
+          <ChevronDown className="text-primary h-6 w-6" />
         </motion.button>
       </div>
     </section>

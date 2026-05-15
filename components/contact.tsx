@@ -2,9 +2,10 @@
 
 import type React from "react";
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import emailjs from "emailjs-com";
+import { motion } from "motion/react";
+import { useInView } from "react-intersection-observer";
+
 import { useTheme } from "@/components/theme-provider";
 
 export default function Contact() {
@@ -37,7 +38,7 @@ export default function Contact() {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -58,7 +59,7 @@ export default function Contact() {
           subject: formData.subject,
           message: formData.message,
         },
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
       );
 
       setSubmitStatus("success");
@@ -74,22 +75,22 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-10 pt-18 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <section id="contact" className="relative px-4 py-10 pt-18 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl">
         <motion.div
           ref={ref}
           variants={containerVariants}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
         >
-          <motion.div variants={itemVariants} className="text-center mb-12">
-            <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+          <motion.div variants={itemVariants} className="mb-12 text-center">
+            <h2 className="mb-4 text-4xl font-bold sm:text-5xl">
               Let's <span className="text-primary">Connect</span>
             </h2>
-            <div className="flex justify-center mb-4">
-              <div className="w-20 h-1 bg-linear-to-r from-primary to-secondary rounded-full"></div>
+            <div className="mb-4 flex justify-center">
+              <div className="from-primary to-secondary h-1 w-20 rounded-full bg-linear-to-r"></div>
             </div>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-muted-foreground text-lg">
               I'm always open to discussing new projects, creative ideas, or
               opportunities to collaborate.
             </p>
@@ -97,12 +98,12 @@ export default function Contact() {
 
           <motion.div
             variants={itemVariants}
-            className="p-8 rounded-lg bg-card border border-border mb-8"
+            className="bg-card border-border mb-8 rounded-lg border p-8"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
+                  <label className="text-foreground mb-2 block text-sm font-medium">
                     Name
                   </label>
                   <input
@@ -112,11 +113,11 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 rounded-lg bg-background border border-border focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-colors"
+                    className="bg-background/80 border-border focus:border-primary focus:ring-primary/50 w-full rounded-lg border px-4 py-2 transition-colors focus:ring-1 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
+                  <label className="text-foreground mb-2 block text-sm font-medium">
                     Email
                   </label>
                   <input
@@ -126,13 +127,13 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 rounded-lg bg-background border border-border focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-colors"
+                    className="bg-background/80 border-border focus:border-primary focus:ring-primary/50 w-full rounded-lg border px-4 py-2 transition-colors focus:ring-1 focus:outline-none"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label className="text-foreground mb-2 block text-sm font-medium">
                   Subject
                 </label>
                 <input
@@ -142,12 +143,12 @@ export default function Contact() {
                   value={formData.subject}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 rounded-lg bg-background border border-border focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-colors"
+                  className="bg-background/80 border-border focus:border-primary focus:ring-primary/50 w-full rounded-lg border px-4 py-2 transition-colors focus:ring-1 focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label className="text-foreground mb-2 block text-sm font-medium">
                   Message
                 </label>
                 <textarea
@@ -157,7 +158,7 @@ export default function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 rounded-lg bg-background border border-border focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-colors resize-none"
+                  className="bg-background/80 border-border focus:border-primary focus:ring-primary/50 w-full resize-none rounded-lg border px-4 py-2 transition-colors focus:ring-1 focus:outline-none"
                 />
               </div>
 
@@ -166,7 +167,7 @@ export default function Contact() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-3 rounded-lg bg-green-500/10 border border-green-500/30 text-green-500 text-sm font-medium"
+                  className="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm font-medium text-green-500"
                 >
                   🎉 Message sent successfully!
                 </motion.div>
@@ -177,7 +178,7 @@ export default function Contact() {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500 text-sm font-medium"
+                  className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm font-medium text-red-500"
                 >
                   ❌ Error sending message. Please try again.
                 </motion.div>
@@ -194,7 +195,7 @@ export default function Contact() {
                       : "0 10px 20px rgba(255, 157, 0, 0.3)",
                 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full px-6 py-3 bg-linear-to-r from-primary to-secondary text-primary-foreground rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="from-primary to-secondary text-primary-foreground w-full cursor-pointer rounded-lg bg-linear-to-r px-6 py-3 font-semibold transition-all hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isSubmitting ? "Sending..." : "Send Message"}
               </motion.button>

@@ -1,0 +1,192 @@
+---
+title: "Prettier + Tailwind CSS Plugin — The Complete Setup Guide"
+description:
+  "A confirmed-working setup for Prettier with automatic import sorting and
+  Tailwind class sorting in Next.js projects — including the Object.create fix
+  for the latest plugin versions."
+image: "/Images/blog/prettier-tailwind.png"
+date: 2026-04-28
+---
+
+# Prettier + Tailwind CSS Plugin — The Complete Setup Guide
+
+Getting Prettier, `@ianvs/prettier-plugin-sort-imports`, and
+`prettier-plugin-tailwindcss` to work together sounds simple — until you hit the
+silent failure where import sorting stops working on VS Code save. This guide
+documents the confirmed working setup for the **latest** versions of all three
+plugins.
+
+## Why This Is Non-Trivial
+
+`prettier-plugin-tailwindcss` (v0.8.0+) uses a `plugin.name` property to detect
+and chain compatible plugins via its internal `preprocess` step.
+`@ianvs/prettier-plugin-sort-imports` does **not** export a `.name`, so the
+Tailwind plugin cannot identify it — causing the VS Code Prettier extension to
+silently skip import sorting on save.
+
+The fix: patch the sort-imports plugin with a `.name` before registering it.
+
+## Confirmed Working Versions
+
+| Package                               | Version  |
+| ------------------------------------- | -------- |
+| `prettier`                            | `^3.8.3` |
+| `@ianvs/prettier-plugin-sort-imports` | `^4.7.1` |
+| `prettier-plugin-tailwindcss`         | `^0.8.0` |
+
+## Step 1: Install Dependencies
+
+```bash
+npm install -D prettier @ianvs/prettier-plugin-sort-imports prettier-plugin-tailwindcss
+```
+
+> **Do NOT pin to `prettier-plugin-tailwindcss@^0.7.2`** — that's an older
+> workaround. This guide uses the latest version correctly.
+
+## Step 2: Create `prettier.config.js`
+
+Delete any existing `.prettierrc` or `.prettierrc.json` file first, then create
+`prettier.config.js` in your project root:
+
+```javascript
+const sortImports = require("@ianvs/prettier-plugin-sort-imports");
+const tailwindcss = require("prettier-plugin-tailwindcss");
+
+// prettier-plugin-tailwindcss uses plugin.name to find compatible plugins.
+// @ianvs/prettier-plugin-sort-imports doesn't export a .name, so we add it
+// manually so the tailwindcss plugin can chain the preprocess step correctly.
+// We use Object.create to inherit lazily (avoids evaluating optional-dep getters).
+const sortImportsWithName = Object.create(sortImports);
+sortImportsWithName.name = "@ianvs/prettier-plugin-sort-imports";
+
+/** @type {import('prettier').Config} */
+module.exports = {
+  plugins: [sortImportsWithName, tailwindcss],
+  tailwindStylesheet: "./app/globals.css",
+  importOrder: [
+    "^react$",
+    "^next(/.*)?$",
+    "<THIRD_PARTY_MODULES>",
+    "",
+    "^@/components/ui/(.*)$",
+    "^@/components/(.*)$",
+    "^@/hooks/(.*)$",
+    "^@/lib/(.*)$",
+    "^@/utils/(.*)$",
+    "^@/types/(.*)$",
+    "^@/(.*)$",
+    "",
+    "^[./]",
+  ],
+  importOrderTypeScriptVersion: "5.0.0",
+  importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"],
+};
+```
+
+> **Why `Object.create` instead of a plain object `{}`?**  
+> Using `Object.create(sortImports)` creates a prototype chain, so all the
+> original plugin methods (`parsers`, `printers`, `options`, etc.) are inherited
+> lazily. A plain spread `{ ...sortImports, name: "..." }` can trigger
+> optional-dependency getter errors during destructuring.
+
+## Step 3: VS Code Settings
+
+Add to your **project-level** `.vscode/settings.json` (create if it doesn't
+exist):
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
+```
+
+## Step 4: Verify It Works
+
+Open any `.tsx` file, add imports in random order, then save. Both should happen
+simultaneously:
+
+- ✅ Imports are sorted and grouped
+- ✅ Tailwind classes are reordered
+
+You can also verify from the terminal:
+
+```bash
+npx prettier --write components/test-prettier.tsx
+```
+
+## How to Add a New Plugin (Safe Pattern)
+
+Follow this checklist every time you add a Prettier plugin:
+
+### 1. Install the plugin
+
+```bash
+npm install -D <plugin-package-name>
+```
+
+### 2. Require it in `prettier.config.js`
+
+```javascript
+const myNewPlugin = require("<plugin-package-name>");
+```
+
+### 3. Check if it exports a `.name`
+
+```bash
+node -e "const p = require('<plugin-package-name>'); console.log(p.name)"
+```
+
+- **If it prints a string** → it already has a name. Add it to the `plugins`
+  array directly.
+- **If it prints `undefined`** → you **must** patch it with the `Object.create`
+  fix:
+
+```javascript
+const myNewPluginWithName = Object.create(myNewPlugin);
+myNewPluginWithName.name = "<plugin-package-name>";
+```
+
+### 4. Insert into the `plugins` array in the correct order
+
+`prettier-plugin-tailwindcss` **must always be last**. Insert your new plugin
+before it:
+
+```javascript
+plugins: [sortImportsWithName, myNewPluginWithName, tailwindcss],
+//                              ↑ new plugin here   ↑ always last
+```
+
+### 5. Test
+
+```bash
+npx prettier --write <some-file>
+```
+
+Then save the same file in VS Code and confirm both terminal and on-save
+behaviour match.
+
+## Troubleshooting
+
+| Symptom                                          | Likely Cause                                 | Fix                                                                                     |
+| ------------------------------------------------ | -------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Imports don't sort on save, but work in terminal | `.name` patch missing on sort-imports plugin | Use the `Object.create` + `.name` fix                                                   |
+| Tailwind classes sort but imports don't          | Plugin order wrong                           | Put `sortImportsWithName` **before** `tailwindcss`                                      |
+| Prettier crashes on `.tsx` files                 | Missing parser plugins                       | Ensure `importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"]` is set    |
+| New plugin works in terminal but not on save     | New plugin missing `.name`                   | Apply `Object.create` patch to the new plugin too                                       |
+| Nothing formats on save                          | VS Code not using project Prettier           | Check `.vscode/settings.json` has `"editor.defaultFormatter": "esbenp.prettier-vscode"` |
+
+## Conclusion
+
+The root cause of most Prettier plugin conflicts is a missing `.name` export.
+Once you understand that `prettier-plugin-tailwindcss` uses plugin names to
+chain its `preprocess` step, the fix is straightforward. Use `Object.create` to
+patch any plugin missing a name, always keep `tailwindcss` last in the array,
+and you'll have a stable, silent formatter that just works on every save.
+
+---
+
+> 🔗 **Prefer to stay on older, pinned versions?**  
+> If the `Object.create` patch doesn't work for your project, check out the
+> [**Legacy Version Setup Guide**](/blogs/prettier-setup-guide-legacy-version)
+> which uses `prettier-plugin-tailwindcss ^0.7.2` — no patching required.

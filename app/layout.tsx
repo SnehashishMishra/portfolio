@@ -1,10 +1,16 @@
 import type React from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { ViewTransitions } from "next-view-transitions";
+
 import { ThemeProvider } from "@/components/theme-provider";
+
+// @ts-ignore: CSS module declarations not found
 import "./globals.css";
+
 import { Toaster } from "@/components/ui/toast";
 import FaviconSwitcher from "@/components/FaviconSwitcher";
+import Navigation from "@/components/navigation";
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
@@ -23,6 +29,11 @@ export const metadata = {
     "Next.js",
     "React Developer",
     "Portfolio",
+    "TypeScript",
+    "Framer Motion",
+    "React Motion",
+    " ",
+    "",
     "JavaScript",
     "Tailwind CSS",
     "Cloud Computing",
@@ -106,13 +117,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark">
-      <body className="font-sans antialiased bg-background text-foreground scroll-smooth">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className="dark relative scroll-smooth"
+      data-scroll-behavior="smooth"
+    >
+      <body className="bg-background text-foreground relative font-sans antialiased">
         <ThemeProvider>
-          <FaviconSwitcher />
-          {children}
-          <Toaster />
-          <Analytics />
+          <ViewTransitions>
+            <Navigation />
+            <FaviconSwitcher />
+            {children}
+            <Toaster />
+            <Analytics />
+          </ViewTransitions>
         </ThemeProvider>
       </body>
     </html>

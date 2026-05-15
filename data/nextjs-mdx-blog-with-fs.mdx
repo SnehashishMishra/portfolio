@@ -1,0 +1,378 @@
+---
+title: "Building an MDX Blog with Next.js Server Components, fs, and path"
+description:
+  "A complete walkthrough of how to build a file-system-driven MDX blog in
+  Next.js using Server Components, next-mdx-remote, remark-gfm, and custom MDX
+  components — no database required."
+image: "/Images/blog/mdx-blog-setup.png"
+date: 2026-05-14
+---
+
+# Building an MDX Blog with Next.js Server Components, fs, and path
+
+One of the cleanest ways to build a personal blog in Next.js is to skip the
+database entirely. You write posts as `.mdx` files on disk, read them at request
+time with Node's built-in `fs` and `path` modules, and render them with React
+Server Components. No API calls, no ORM, no CMS — just files and functions.
+
+This is exactly how this blog is built. Here's the full setup from scratch.
+
+## What We're Building
+
+| Layer             | Technology                                       |
+| ----------------- | ------------------------------------------------ |
+| Runtime           | Next.js App Router (Server Components only)      |
+| Content format    | `.mdx` files with YAML frontmatter               |
+| MDX compiler      | `next-mdx-remote/rsc` — `compileMDX`             |
+| Table/GFM support | `remark-gfm`                                     |
+| Custom components | React components mapped to HTML elements         |
+| Styling           | `@tailwindcss/typography` (`prose` class)        |
+| File handling     | `{ promise as fs } from 'fs'` and `path` package |
+
+## Step 1: Install Dependencies
+
+```bash
+npm install next-mdx-remote remark-gfm fs path
+npm install -D @tailwindcss/typography
+```
+
+Add the Typography plugin to your `globals.css` (Tailwind v4 syntax):
+
+```css
+@plugin "@tailwindcss/typography";
+```
+
+## Step 2: Write Your MDX Files
+
+Create a `src/data/` directory. Every file in it is one blog post. Each file
+starts with a YAML frontmatter block:
+
+```mdx
+---
+title: "Your Post Title"
+description: "A short summary shown on the listing page."
+image: "/Images/blog/your-cover.png"
+date: 2026-05-14
+---
+
+# Your Post Title
+
+Regular markdown content goes here. You can use **bold**, `code`, and more.
+```
+
+The filename (without `.mdx`) becomes the URL slug. `my-first-post.mdx` →
+`/blog/my-first-post`.
+
+## Step 3: Create the MDX Utility
+
+This is the core of the system. Create `src/utils/mdx.tsx`:
+
+```tsx
+import { promises as fs } from "fs";
+import path from "path";
+import { compileMDX } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
+
+import { mdxComponents } from "@/components/MdxComponents";
+
+type FrontMatter = {
+  title: string;
+  description: string;
+  date: string;
+  image: string;
+};
+
+// Used on the blog detail page — returns compiled JSX + frontmatter
+export const getSingleBlog = async (slug: string) => {
+  try {
+    const singleBlog = await fs.readFile(
+      path.join(process.cwd(), "src/data", `${slug}.mdx`),
+      "utf-8",
+    );
+
+    if (!singleBlog) return null;
+
+    const { content, frontmatter } = await compileMDX<FrontMatter>({
+      source: singleBlog,
+      options: {
+        parseFrontmatter: true,
+        mdxOptions: { remarkPlugins: [remarkGfm] },
+      },
+      components: mdxComponents,
+    });
+
+    return { content, frontmatter };
+  } catch (error) {
+    console.log(`Error reading blog file for slug "${slug}"`, error);
+    return null;
+  }
+};
+
+// Used on the listing page — returns frontmatter only for all posts
+export const getBlogs = async () => {
+  const files = await fs.readdir(path.join(process.cwd(), "src/data"));
+
+  const allBlogs = await Promise.all(
+    files.map(async (file) => {
+      const slug = file.replace(".mdx", "");
+      const frontmatter = await getBlogFrontMatterFromSlug(slug);
+      return { slug, ...frontmatter };
+    }),
+  );
+
+  return allBlogs;
+};
+
+// Used internally by getBlogs — cheaper than getSingleBlog (no content compile)
+export const getBlogFrontMatterFromSlug = async (slug: string) => {
+  const singleBlog = await fs.readFile(
+    path.join(process.cwd(), "src/data/", `${slug}.mdx`),
+    "utf-8",
+  );
+
+  if (!singleBlog) return null;
+
+  const { frontmatter } = await compileMDX<FrontMatter>({
+    source: singleBlog,
+    options: {
+      parseFrontmatter: true,
+      mdxOptions: { remarkPlugins: [remarkGfm] },
+    },
+  });
+
+  return frontmatter;
+};
+```
+
+### Why three functions?
+
+- **`getSingleBlog`** — compiles the full MDX content into React JSX. Called
+  only on the detail page for one post at a time.
+- **`getBlogFrontMatterFromSlug`** — compiles frontmatter only, skipping the
+  expensive JSX compilation. Used when building the listing.
+- **`getBlogs`** — reads the directory, maps over every file, calls
+  `getBlogFrontMatterFromSlug` for each, and returns the combined array.
+
+### Why `.tsx` instead of `.ts`?
+
+The file imports `mdxComponents` which contains JSX. TypeScript requires the
+`.tsx` extension to allow JSX syntax in a file.
+
+## Step 4: Why remark-gfm is Non-Negotiable
+
+By default, `compileMDX` only understands core Markdown. Pipe-style tables
+(`| col | col |`) are a **GitHub Flavored Markdown (GFM)** extension and are not
+parsed without `remark-gfm`. Without it, your table is treated as a raw
+paragraph of text — the HTML `<table>` element is never generated, so no amount
+of custom table components will help.
+
+Always pass it in `mdxOptions`:
+
+```tsx
+options: {
+  parseFrontmatter: true,
+  mdxOptions: { remarkPlugins: [remarkGfm] },
+},
+```
+
+## Step 5: Custom MDX Components
+
+`compileMDX` accepts a `components` map that replaces the default HTML elements
+rendered from your markdown. Create `src/components/MdxComponents.tsx`:
+
+```tsx
+import type { ComponentPropsWithoutRef } from "react";
+
+function Table({ children }: ComponentPropsWithoutRef<"table">) {
+  return (
+    <div className="not-prose my-8 w-full overflow-x-auto rounded-xl border border-neutral-200 shadow-sm dark:border-white/10">
+      <table className="w-full border-collapse text-sm">{children}</table>
+    </div>
+  );
+}
+
+function Thead({ children }: ComponentPropsWithoutRef<"thead">) {
+  return (
+    <thead className="bg-neutral-100 text-neutral-700 dark:bg-white/5 dark:text-neutral-300">
+      {children}
+    </thead>
+  );
+}
+
+function Tbody({ children }: ComponentPropsWithoutRef<"tbody">) {
+  return (
+    <tbody className="divide-y divide-neutral-200 dark:divide-white/10">
+      {children}
+    </tbody>
+  );
+}
+
+function Tr({ children }: ComponentPropsWithoutRef<"tr">) {
+  return (
+    <tr className="transition-colors hover:bg-neutral-50 dark:hover:bg-white/3">
+      {children}
+    </tr>
+  );
+}
+
+function Th({ children }: ComponentPropsWithoutRef<"th">) {
+  return (
+    <th className="px-5 py-3 text-left text-xs font-semibold tracking-wider uppercase">
+      {children}
+    </th>
+  );
+}
+
+function Td({ children }: ComponentPropsWithoutRef<"td">) {
+  return (
+    <td className="px-5 py-3 text-neutral-800 dark:text-neutral-200">
+      {children}
+    </td>
+  );
+}
+
+export const mdxComponents = {
+  table: Table,
+  thead: Thead,
+  tbody: Tbody,
+  tr: Tr,
+  th: Th,
+  td: Td,
+};
+```
+
+> **Why `not-prose` on the wrapper div?**  
+> The blog renders inside a `prose` container. `@tailwindcss/typography` applies
+> opinionated styles to `table` elements inside `prose`. Wrapping the table in a
+> `not-prose` div opts that specific subtree out of typography styles so your
+> custom classes take full effect.
+
+## Step 6: The Blog Listing Page
+
+`src/app/blog/page.tsx` is a plain async Server Component. It calls
+`getBlogs()`, which runs on the server, reads the filesystem, and returns the
+array of posts with their frontmatter:
+
+```tsx
+import { getBlogs } from "@/utils/mdx";
+import { Link } from "next-view-transitions";
+
+export default async function BlogsPage() {
+  const allBlogs = await getBlogs();
+
+  const truncate = (str: string, length: number) =>
+    str.length > length ? str.substring(0, length) + "..." : str;
+
+  return (
+    <div className="flex flex-col gap-8 px-4 py-10">
+      {allBlogs.map((blog) => (
+        <Link key={blog.slug} href={`/blog/${blog.slug}`}>
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold">{blog.title}</h2>
+            <p className="text-sm text-neutral-500">
+              {new Date(blog.date || "").toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </p>
+          </div>
+          <p className="pt-2 text-sm text-neutral-500">
+            {truncate(blog.description || "", 150)}
+          </p>
+        </Link>
+      ))}
+    </div>
+  );
+}
+```
+
+## Step 7: The Blog Detail Page
+
+`src/app/blog/[slug]/page.tsx` receives the slug from the URL, calls
+`getSingleBlog`, and renders the compiled JSX content directly inside a `prose`
+container:
+
+```tsx
+import { redirect } from "next/navigation";
+import { getSingleBlog, getBlogFrontMatterFromSlug } from "@/utils/mdx";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = await params;
+  const frontmatter = await getBlogFrontMatterFromSlug(slug);
+  if (!frontmatter) return { title: "Blog not found" };
+  return {
+    title: frontmatter.title,
+    description: frontmatter.description,
+  };
+}
+
+export default async function SingleBlogPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const { slug } = await params;
+  const blog = await getSingleBlog(slug);
+
+  if (!blog) redirect("/blog");
+
+  const { content, frontmatter } = blog;
+  return (
+    <div>
+      <img
+        src={frontmatter.image}
+        alt={frontmatter.title}
+        className="mx-auto mb-20 max-h-96 w-full max-w-2xl rounded-2xl object-cover shadow-xl"
+      />
+      <div className="prose mx-auto">{content}</div>
+    </div>
+  );
+}
+```
+
+`compileMDX` returns `content` as a React element — you render it exactly like
+any other JSX, no `dangerouslySetInnerHTML` needed.
+
+## How the Data Flow Works
+
+```
+/blog/[slug] request
+       │
+       ▼
+getSingleBlog(slug)
+       │
+       ├─ fs.readFile("src/data/<slug>.mdx")   ← Node.js filesystem, server only
+       │
+       └─ compileMDX(source, { remark-gfm, mdxComponents })
+              │
+              ├─ parseFrontmatter → { title, description, date, image }
+              └─ compileContent  → React JSX element
+```
+
+Everything happens on the server. No client JavaScript is shipped for the blog
+rendering itself.
+
+## Key Gotchas
+
+| Problem                          | Cause                           | Fix                                              |
+| -------------------------------- | ------------------------------- | ------------------------------------------------ |
+| Tables render as raw text        | `remark-gfm` not configured     | Add `remarkPlugins: [remarkGfm]` to `mdxOptions` |
+| Custom table styles not applying | `prose` overriding your classes | Wrap the table in `not-prose`                    |
+| `compileMDX` import errors       | Used in a client component      | This only works in Server Components             |
+| `fs` not available               | Running in a client bundle      | Ensure the file has no `"use client"` directive  |
+| Slug returns 404                 | Filename doesn't match URL      | The filename minus `.mdx` is the exact slug      |
+
+## Conclusion
+
+The filesystem-driven approach keeps your blog dead simple — add a `.mdx` file,
+it immediately appears at `/blog/<filename>`. There is no build step, no content
+API to maintain, and no database to provision. `compileMDX` from
+`next-mdx-remote/rsc` compiles your markdown on the server at request time,
+giving you full React component power inside your posts while keeping the client
+bundle completely clean.

@@ -1,0 +1,164 @@
+---
+title: "Understanding React Hooks"
+description:
+  "Dive into React's most essential hooks — useState, useEffect, useRef,
+  useContext, and useMemo — with practical examples and mental models."
+image: "/Images/blog/react-hooks.png"
+date: 2024-08-05
+---
+
+# Understanding React Hooks
+
+Before React 16.8, sharing stateful logic between components required complex
+patterns like higher-order components (HOCs) or render props. Hooks changed
+everything. They let you use state and other React features inside function
+components, keeping your code simpler and more reusable.
+
+## useState — Local Component State
+
+`useState` is the most fundamental hook. It returns a state value and a setter
+function:
+
+```tsx
+import { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+```
+
+Every time `setCount` is called, React re-renders the component with the new
+value.
+
+## useEffect — Side Effects
+
+`useEffect` is for code that interacts with the outside world — fetching data,
+setting up subscriptions, or updating the document title:
+
+```tsx
+import { useState, useEffect } from "react";
+
+function UserProfile({ userId }: { userId: number }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    fetch(`/api/users/${userId}`)
+      .then((res) => res.json())
+      .then((data) => setUser(data));
+  }, [userId]); // re-runs whenever userId changes
+
+  if (!user) return <p>Loading...</p>;
+  return <p>{user.name}</p>;
+}
+```
+
+The **dependency array** (`[userId]`) controls when the effect re-runs. An empty
+array `[]` means run once on mount.
+
+## useRef — Persistent Mutable Values
+
+`useRef` stores a value that persists between renders without triggering a
+re-render. Most commonly used to reference DOM elements:
+
+```tsx
+import { useRef } from "react";
+
+function FocusInput() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <>
+      <input ref={inputRef} type="text" />
+      <button onClick={() => inputRef.current?.focus()}>Focus</button>
+    </>
+  );
+}
+```
+
+## useContext — Consuming Shared State
+
+`useContext` lets any component read from a React Context without prop-drilling:
+
+```tsx
+import { createContext, useContext } from "react";
+
+const ThemeContext = createContext<"light" | "dark">("light");
+
+function ThemedButton() {
+  const theme = useContext(ThemeContext);
+  return (
+    <button
+      className={theme === "dark" ? "bg-gray-800 text-white" : "bg-white"}
+    >
+      Click me
+    </button>
+  );
+}
+```
+
+## useMemo — Expensive Computations
+
+`useMemo` caches the result of a calculation so it doesn't recompute on every
+render:
+
+```tsx
+import { useMemo } from "react";
+
+function SortedList({ items }: { items: number[] }) {
+  const sorted = useMemo(() => [...items].sort((a, b) => a - b), [items]);
+  return (
+    <ul>
+      {sorted.map((n) => (
+        <li key={n}>{n}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+Only reach for `useMemo` when you have a provably expensive computation —
+premature optimisation can add complexity without benefit.
+
+## Custom Hooks
+
+The real power of hooks is composability. You can extract reusable logic into
+your own custom hooks:
+
+```tsx
+function useWindowWidth() {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return width;
+}
+```
+
+Any component can now call `useWindowWidth()` to get the current viewport width
+reactively.
+
+## Rules of Hooks
+
+Two rules to always follow:
+
+1. **Only call hooks at the top level** — never inside loops, conditions, or
+   nested functions.
+2. **Only call hooks from React functions** — function components or custom
+   hooks, not plain JS functions.
+
+## Conclusion
+
+Hooks make React components cleaner, more testable, and far easier to share
+logic across your codebase. Master `useState` and `useEffect` first, then
+gradually adopt `useRef`, `useContext`, and `useMemo` as your needs grow.

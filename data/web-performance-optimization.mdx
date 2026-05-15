@@ -1,0 +1,163 @@
+---
+title: "Web Performance Optimization"
+description:
+  "Learn the most impactful techniques for making your web apps faster — from
+  lazy loading and code splitting to image optimization and Core Web Vitals."
+image: "/Images/blog/performance.png"
+date: 2024-11-18
+---
+
+# Web Performance Optimization
+
+Speed is not just a feature — it directly impacts user retention, SEO rankings,
+and conversion rates. Studies consistently show that a one-second delay in page
+load time can reduce conversions by up to 7%. Optimising your web app's
+performance is one of the highest-return investments you can make as a
+developer.
+
+## Understanding Core Web Vitals
+
+Google's **Core Web Vitals** are the industry-standard metrics for measuring
+user experience:
+
+| Metric                              | What It Measures                     | Good Score |
+| ----------------------------------- | ------------------------------------ | ---------- |
+| **LCP** (Largest Contentful Paint)  | How fast the main content loads      | ≤ 2.5s     |
+| **INP** (Interaction to Next Paint) | How responsive the page is to input  | ≤ 200ms    |
+| **CLS** (Cumulative Layout Shift)   | How stable the layout is during load | ≤ 0.1      |
+
+You can measure these using [PageSpeed Insights](https://pagespeed.web.dev/) or
+the Chrome DevTools Performance panel.
+
+## 1. Optimise Images
+
+Images are typically the heaviest assets on a page. A few high-impact changes:
+
+- **Use modern formats**: WebP and AVIF offer 30–50% smaller file sizes than
+  JPEG/PNG with equal quality.
+- **Specify dimensions**: Always set `width` and `height` on `<img>` tags to
+  prevent layout shift (CLS).
+- **Lazy load off-screen images**: Use the native `loading="lazy"` attribute.
+
+```html
+<img
+  src="/images/hero.webp"
+  alt="Hero image"
+  width="1200"
+  height="600"
+  loading="lazy"
+/>
+```
+
+In Next.js, the `<Image>` component handles all of this automatically.
+
+## 2. Code Splitting
+
+Don't ship your entire JavaScript bundle upfront. Split it into smaller chunks
+loaded on demand:
+
+```tsx
+import dynamic from "next/dynamic";
+
+// This component is only loaded when it's actually needed
+const HeavyChart = dynamic(() => import("@/components/HeavyChart"), {
+  loading: () => <p>Loading chart...</p>,
+});
+```
+
+React's built-in `React.lazy()` works similarly outside of Next.js.
+
+## 3. Minimise Render-Blocking Resources
+
+JavaScript and CSS loaded in the `<head>` block the browser from rendering
+anything. Best practices:
+
+- Add `defer` or `async` to third-party `<script>` tags.
+- Load non-critical CSS asynchronously.
+- Inline critical CSS for above-the-fold content.
+
+```html
+<!-- Defer non-critical scripts -->
+<script src="analytics.js" defer></script>
+```
+
+## 4. Use a CDN
+
+A **Content Delivery Network** serves your static assets (images, fonts, JS,
+CSS) from servers geographically close to each user. This dramatically reduces
+latency. Vercel, Netlify, and Cloudflare all provide built-in CDN caching.
+
+## 5. Leverage Caching
+
+HTTP caching allows browsers to reuse previously downloaded resources:
+
+```
+Cache-Control: public, max-age=31536000, immutable
+```
+
+This header tells browsers to cache the file for one year. Use hashed filenames
+(e.g., `bundle.abc123.js`) so cached files are automatically invalidated when
+content changes.
+
+## 6. Reduce JavaScript Payload
+
+Every kilobyte of JavaScript has a cost — it must be downloaded, parsed, and
+executed:
+
+- **Audit your bundle**: Use tools like
+  [Bundlephobia](https://bundlephobia.com/) to check the size of npm packages
+  before adding them.
+- **Tree-shake**: Only import what you need. Prefer named imports over importing
+  entire libraries.
+- **Prefer smaller alternatives**: `date-fns` over `moment.js`, `zustand` over
+  `redux` for simple state.
+
+```tsx
+// ❌ Imports the entire lodash library (~70kb gzipped)
+import _ from "lodash";
+
+// ✅ Only imports the debounce function (~2kb)
+import debounce from "lodash/debounce";
+```
+
+## 7. Optimise Fonts
+
+Web fonts are often a hidden performance bottleneck:
+
+- Use `font-display: swap` so text remains visible while fonts load.
+- Self-host fonts rather than relying on Google Fonts for better caching
+  control.
+- In Next.js, use `next/font` to automatically optimise and self-host Google
+  Fonts.
+
+```css
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter.woff2") format("woff2");
+  font-display: swap;
+}
+```
+
+## 8. Preload Critical Resources
+
+Use `<link rel="preload">` to tell the browser to fetch important resources
+early:
+
+```html
+<link
+  rel="preload"
+  href="/fonts/inter.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
+<link rel="preload" href="/images/hero.webp" as="image" />
+```
+
+## Conclusion
+
+Web performance is an ongoing practice, not a one-time fix. Start by measuring
+with Lighthouse or PageSpeed Insights, identify your biggest bottlenecks, and
+work through them methodically. Even a few targeted improvements — optimised
+images, lazy loading, and a CDN — can make a night-and-day difference for your
+users.

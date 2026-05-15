@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+
 import { useTheme } from "@/components/theme-provider";
 
 export default function FaviconSwitcher() {
@@ -8,7 +9,7 @@ export default function FaviconSwitcher() {
 
   useEffect(() => {
     const favicon = document.querySelector(
-      "link[rel='icon']"
+      "link[rel='icon']",
     ) as HTMLLinkElement;
     if (!favicon) return;
 

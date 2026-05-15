@@ -1,0 +1,205 @@
+---
+title: "The Node.js Event Loop — A Deep Dive"
+description:
+  "Understand exactly how Node.js handles concurrency without threads: the event
+  loop phases, the microtask queue, libuv, and how to write non-blocking code
+  that scales."
+image: "/Images/blog/nodejs.png"
+date: 2024-12-05
+---
+
+# The Node.js Event Loop — A Deep Dive
+
+Node.js runs JavaScript on a single thread, yet powers some of the busiest
+servers on the planet. The secret is the **event loop** — a coordination
+mechanism that lets a single thread juggle thousands of concurrent I/O
+operations by never blocking to wait for results. Understanding it deeply is
+what separates developers who write performant Node.js from those who
+accidentally block everything.
+
+## The Big Picture: libuv
+
+The event loop is not part of V8 (the JavaScript engine). It lives in **libuv**,
+a C library that provides Node.js with cross-platform asynchronous I/O, thread
+pools, and the event loop itself. When you call `fs.readFile()`, libuv offloads
+the work to its thread pool (4 threads by default), and notifies the event loop
+when the OS signals completion. Your JavaScript thread never blocks.
+
+## The Six Phases of the Event Loop
+
+The event loop runs continuously in a cycle. Each iteration (a "tick") walks
+through six ordered phases:
+
+```
+   ┌──────────────────────────────────────────────────┐
+   │                     timers                       │  setTimeout, setInterval callbacks
+   └─────────────────────────┬────────────────────────┘
+                             │
+   ┌─────────────────────────▼────────────────────────┐
+   │                  pending callbacks               │  I/O errors from previous tick
+   └─────────────────────────┬────────────────────────┘
+                             │
+   ┌─────────────────────────▼────────────────────────┐
+   │                   idle, prepare                  │  internal use only
+   └─────────────────────────┬────────────────────────┘
+                             │
+   ┌─────────────────────────▼────────────────────────┐
+   │                      poll                        │  fetch new I/O events (blocking here)
+   └─────────────────────────┬────────────────────────┘
+                             │
+   ┌─────────────────────────▼────────────────────────┐
+   │                      check                       │  setImmediate callbacks
+   └─────────────────────────┬────────────────────────┘
+                             │
+   ┌─────────────────────────▼────────────────────────┐
+   │                  close callbacks                 │  socket.on('close', ...)
+   └──────────────────────────────────────────────────┘
+```
+
+### Phase 1: Timers
+
+Executes callbacks whose `setTimeout()` or `setInterval()` delay has elapsed.
+Note: the delay is a **minimum**, not a guarantee — if the poll phase is busy,
+timers fire late.
+
+### Phase 3: Poll
+
+The most important phase. The event loop sits here waiting for I/O events if no
+callbacks are ready. When a file read, network response, or database query
+completes, the OS signals libuv, and the poll queue fills with callbacks to
+execute.
+
+### Phase 5: Check
+
+Executes `setImmediate()` callbacks — these always run after the poll phase,
+even if a timer is eligible.
+
+## Microtasks: The Priority Queue
+
+Between **every** phase transition, Node.js drains two special queues before
+moving on:
+
+1. `process.nextTick()` queue — highest priority
+2. `Promise` microtask queue (`.then()`, `async/await`)
+
+```javascript
+setTimeout(() => console.log("setTimeout"), 0);
+setImmediate(() => console.log("setImmediate"));
+Promise.resolve().then(() => console.log("Promise.then"));
+process.nextTick(() => console.log("nextTick"));
+
+console.log("synchronous");
+```
+
+**Output:**
+
+```
+synchronous
+nextTick
+Promise.then
+setTimeout       (or setImmediate — order between these is non-deterministic in the main module)
+setImmediate
+```
+
+`nextTick` fires before Promises because it has its own higher-priority queue.
+Both fire before any macrotask (setTimeout, setImmediate, I/O).
+
+## The Danger of Blocking the Event Loop
+
+Because there is only one JS thread, any synchronous, CPU-intensive code blocks
+**all** incoming requests until it finishes:
+
+```javascript
+// ❌ This blocks for ~1 second — every pending request waits
+app.get("/bad", (req, res) => {
+  const start = Date.now();
+  while (Date.now() - start < 1000) {} // busy-wait
+  res.send("done");
+});
+
+// ✅ Non-blocking — yields control back to the event loop
+app.get("/good", async (req, res) => {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  res.send("done");
+});
+```
+
+Common accidental blocking sources: `JSON.parse()` on huge payloads, synchronous
+crypto, `fs.readFileSync()`, and heavy regex on untrusted input.
+
+## Worker Threads for CPU-Intensive Work
+
+For genuinely CPU-bound tasks (image resizing, zip compression, ML inference),
+offload to a **Worker Thread**:
+
+```javascript
+import { Worker, isMainThread, parentPort, workerData } from "worker_threads";
+
+if (isMainThread) {
+  function runCpuTask(data) {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(new URL(import.meta.url), { workerData: data });
+      worker.on("message", resolve);
+      worker.on("error", reject);
+    });
+  }
+
+  const result = await runCpuTask({ numbers: [1, 2, 3, 4, 5] });
+  console.log("Result:", result);
+} else {
+  // This code runs in the worker thread
+  const sum = workerData.numbers.reduce((a, b) => a + b, 0);
+  parentPort.postMessage(sum);
+}
+```
+
+Worker Threads share memory (via `SharedArrayBuffer`) but have their own event
+loops, keeping the main thread free.
+
+## The libuv Thread Pool
+
+Certain built-in operations — `fs`, `dns.lookup()`, `crypto` — run in libuv's
+thread pool (default size: 4). You can tune it:
+
+```bash
+UV_THREADPOOL_SIZE=16 node server.js
+```
+
+If 4 concurrent DNS lookups are in flight and a 5th comes in, it queues. This is
+a common hidden bottleneck in services that do heavy database or DNS work.
+
+## async/await Under the Hood
+
+`async/await` is syntactic sugar over Promises. Every `await` suspends the
+function and schedules the continuation as a microtask:
+
+```javascript
+async function fetchUser(id) {
+  console.log("A"); // synchronous
+  const user = await db.findById(id); // suspends, event loop continues
+  console.log("B"); // microtask — runs after current phase drains
+  return user;
+}
+
+fetchUser(1);
+console.log("C"); // runs before "B" — synchronous code always runs first
+// Output: A, C, B
+```
+
+## Practical Rules for High-Performance Node.js
+
+| Rule                                              | Why                                          |
+| ------------------------------------------------- | -------------------------------------------- |
+| Never use `*Sync` APIs in request handlers        | Blocks the entire server                     |
+| Keep synchronous code per request under ~1ms      | Ensures timers stay accurate                 |
+| Tune `UV_THREADPOOL_SIZE` for I/O-heavy apps      | Prevents pool starvation                     |
+| Use `setImmediate` instead of `setTimeout(fn, 0)` | More predictable, skips timer phase overhead |
+| Offload CPU work to Worker Threads                | Preserves main thread responsiveness         |
+
+## Conclusion
+
+The event loop is not magic — it is a disciplined scheduling algorithm that
+trades multi-threading complexity for a simpler concurrency model. When you
+understand its phases and the microtask priority queue, you can predict exactly
+when your callbacks fire, avoid blocking bugs before they ship, and write
+Node.js services that genuinely scale.

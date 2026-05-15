@@ -1,0 +1,125 @@
+---
+title: "TypeScript for Beginners"
+description:
+  "A practical introduction to TypeScript — learn how static typing, interfaces,
+  and generics help you write safer, more maintainable JavaScript."
+image: "/Images/blog/typescript.png"
+date: 2024-07-10
+---
+
+# TypeScript for Beginners
+
+TypeScript is a statically typed superset of JavaScript developed by Microsoft.
+It compiles down to plain JavaScript, meaning it runs anywhere JavaScript runs —
+browsers, Node.js, and beyond. The superpower it adds is catching type-related
+bugs at compile time, before your code ever reaches a user.
+
+## Why TypeScript?
+
+JavaScript is dynamically typed, which is flexible but error-prone. You may have
+experienced bugs like calling `.map()` on something that turned out to be
+`undefined`, or passing the wrong shape of object to a function. TypeScript
+eliminates most of these surprises.
+
+## Basic Types
+
+TypeScript introduces explicit type annotations:
+
+```typescript
+let username: string = "Alice";
+let age: number = 30;
+let isLoggedIn: boolean = true;
+let tags: string[] = ["react", "typescript", "nextjs"];
+```
+
+If you try to assign a `number` to `username`, the TypeScript compiler will flag
+it immediately — no runtime surprise needed.
+
+## Functions with Types
+
+```typescript
+function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+
+function add(a: number, b: number): number {
+  return a + b;
+}
+```
+
+Return type annotations (`: string`, `: number`) make it clear what a function
+promises to return, and the compiler will warn you if you break that promise.
+
+## Interfaces
+
+Interfaces describe the shape of an object:
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  isAdmin?: boolean; // optional field
+}
+
+function displayUser(user: User): void {
+  console.log(`${user.name} — ${user.email}`);
+}
+```
+
+This means any object passed to `displayUser` must have `id`, `name`, and
+`email` fields. The optional `?` means `isAdmin` is not required.
+
+## Generics
+
+Generics allow you to write reusable, type-safe code:
+
+```typescript
+function getFirst<T>(items: T[]): T {
+  return items[0];
+}
+
+const firstNumber = getFirst<number>([10, 20, 30]); // 10
+const firstWord = getFirst<string>(["hello", "world"]); // "hello"
+```
+
+The `<T>` placeholder is filled in at call time, giving you full type safety
+without sacrificing flexibility.
+
+## Type vs Interface
+
+Both `type` and `interface` can describe object shapes, but they have subtle
+differences:
+
+- **interface** is best for defining object shapes and can be extended or
+  merged.
+- **type** is more versatile — it can represent unions, primitives, and tuples
+  too.
+
+```typescript
+type ID = string | number; // union type — only possible with `type`
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+interface Point3D extends Point {
+  z: number;
+}
+```
+
+## Getting Started
+
+1. Install TypeScript: `npm install -D typescript`
+2. Initialize a config: `npx tsc --init`
+3. Rename `.js` files to `.ts` and start adding types incrementally.
+
+TypeScript is designed to be adopted gradually — you don't need to type
+everything at once.
+
+## Conclusion
+
+TypeScript shifts error detection from runtime to compile time, making large
+codebases dramatically easier to maintain and refactor. Start small, add types
+where it matters most, and let the compiler be your first line of defence.
