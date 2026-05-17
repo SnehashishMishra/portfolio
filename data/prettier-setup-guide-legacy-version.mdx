@@ -50,7 +50,7 @@ in `v0.8.0`. If you:
 ## Step 1: Install the Pinned Dependencies
 
 ```bash
-npm install -D prettier@^3.8.3 @ianvs/prettier-plugin-sort-imports@^4.4.0 prettier-plugin-tailwindcss@^0.7.2
+npm install -D prettier@ @ianvs/prettier-plugin-sort-imports prettier-plugin-tailwindcss@^0.7.2
 ```
 
 This installs exact major ranges. Using `@` pins the install to your specified
@@ -140,13 +140,14 @@ npx prettier --write components/test-prettier.tsx
 
 ## Troubleshooting
 
-| Symptom                                          | Likely Cause                              | Fix                                                                                     |
-| ------------------------------------------------ | ----------------------------------------- | --------------------------------------------------------------------------------------- |
-| Imports don't sort on save, but work in terminal | Plugin version too new (≥ 0.8.0)          | Downgrade to `prettier-plugin-tailwindcss@^0.7.2`                                      |
-| Tailwind classes sort but imports don't          | Plugin order wrong                        | Put `@ianvs/prettier-plugin-sort-imports` **before** `prettier-plugin-tailwindcss`      |
-| Prettier crashes on `.tsx` files                 | Missing parser plugins                    | Ensure `importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"]` is set   |
-| Nothing formats on save                          | VS Code not using project Prettier        | Check `.vscode/settings.json` has `"editor.defaultFormatter": "esbenp.prettier-vscode"` |
-| Both plugins conflict on upgrade                 | `prettier-plugin-tailwindcss` ≥ 0.8.0    | Either stay on `^0.7.2` or switch to the [latest version guide](/blogs/prettier-setup-guide-for_latest_tailwind_plugin_version) |
+| Symptom                                                     | Likely Cause                            | Fix                                                                                                                             |
+| ----------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| The CLI shows peer dependency conflicts while installation, | Errors caused by strict peer dependency | Use `prettier-plugin-tailwindcss@^0.7.2 --legacy-peer-deps`                                                                     |
+| Imports don't sort on save, but work in terminal            | Plugin version too new (≥ 0.8.0)        | Downgrade to `prettier-plugin-tailwindcss@^0.7.2`                                                                               |
+| Tailwind classes sort but imports don't                     | Plugin order wrong                      | Put `@ianvs/prettier-plugin-sort-imports` **before** `prettier-plugin-tailwindcss`                                              |
+| Prettier crashes on `.tsx` files                            | Missing parser plugins                  | Ensure `importOrderParserPlugins: ["typescript", "jsx", "decorators-legacy"]` is set                                            |
+| Nothing formats on save                                     | VS Code not using project Prettier      | Check `.vscode/settings.json` has `"editor.defaultFormatter": "esbenp.prettier-vscode"`                                         |
+| Both plugins conflict on upgrade                            | `prettier-plugin-tailwindcss` ≥ 0.8.0   | Either stay on `^0.7.2` or switch to the [latest version guide](/blogs/prettier-setup-guide-for_latest_tailwind_plugin_version) |
 
 ---
 
