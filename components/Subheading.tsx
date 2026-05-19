@@ -23,7 +23,7 @@ const Subheading = ({
     >
       <Tag
         className={cn(
-          "text-secondary-blog max-w-lg px-4 pt-4 text-sm md:text-sm",
+          "from-primary via-secondary to-primary max-w-lg bg-linear-to-r bg-clip-text px-4 pt-4 text-justify text-sm font-semibold text-transparent md:text-sm",
           className,
         )}
       >

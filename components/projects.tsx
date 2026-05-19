@@ -1,11 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { ExternalLink, Github } from "lucide-react";
 import { motion, Variants } from "motion/react";
 import { useInView } from "react-intersection-observer";
 
 export default function Projects() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+  const MotionImage = motion.create(Image);
 
   const projects = [
     {
@@ -80,24 +82,25 @@ export default function Projects() {
                 key={index}
                 variants={itemVariants}
                 whileHover={{
-                  y: -5,
+                  y: 3,
                   boxShadow: "0 20px 40px rgba(6, 182, 212, 0.15)",
                 }}
-                className="group bg-card border-border hover:border-primary overflow-hidden rounded-lg border transition-all"
+                className="group bg-card border-border hover:border-primary overflow-hidden rounded-lg border transition-all duration-300"
               >
                 <div className="bg-muted relative h-48 overflow-hidden">
-                  <motion.img
-                    whileHover={{ scale: 1.05 }}
+                  <MotionImage
                     src={project.image}
                     alt={project.title}
-                    className="h-full w-full object-cover"
+                    width={1200}
+                    height={630}
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="from-background/80 absolute inset-0 bg-linear-to-t to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
                 </div>
 
                 <div className="p-6">
                   <h3 className="mb-2 text-xl font-bold">{project.title}</h3>
-                  <p className="text-muted-foreground mb-4 text-sm">
+                  <p className="text-muted-foreground mb-4 text-justify text-sm">
                     {project.description}
                   </p>
 

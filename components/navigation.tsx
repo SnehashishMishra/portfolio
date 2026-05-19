@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Download, Menu, Moon, Sun, X } from "lucide-react";
 import { motion } from "motion/react";
@@ -171,10 +172,12 @@ export default function Navigation() {
             whileHover={{ scale: 1.05 }}
             className="cursor-pointer"
           >
-            <img
-              className="h-8 w-8"
+            <Image
               src={theme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
               alt="Logo"
+              width={32}
+              height={32}
+              className="h-8 w-8"
             />
           </motion.div>
 
@@ -223,8 +226,8 @@ export default function Navigation() {
         initial={{ x: "100%", opacity: 0 }}
         animate={isOpen ? { x: 0, opacity: 1 } : { x: "100%", opacity: 0 }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        style={{ backgroundColor: "var(--background)" }}
-        className={`bg-background/60 border-border fixed inset-0 z-9999 border-l shadow-2xl backdrop-blur-3xl md:hidden ${isOpen ? "pointer-events-auto" : "pointer-events-none"} `}
+        // style={{ backgroundColor: "var(--background)" }}
+        className={`from-background via-centre to-background border-border fixed inset-0 z-9999 border-l bg-conic-180 to-90% shadow-2xl backdrop-blur-3xl md:hidden ${isOpen ? "pointer-events-auto" : "pointer-events-none"} `}
       >
         {/* CLOSE BUTTON */}
         <motion.button

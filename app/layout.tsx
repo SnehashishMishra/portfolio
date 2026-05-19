@@ -1,5 +1,5 @@
 import type React from "react";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ViewTransitions } from "next-view-transitions";
 
@@ -12,10 +12,18 @@ import { Toaster } from "@/components/ui/toast";
 import FaviconSwitcher from "@/components/FaviconSwitcher";
 import Navigation from "@/components/navigation";
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
+const inter = Inter({
+  variable: "--font-heading",
+  subsets: ["latin"],
+  preload: false,
+});
 
-/* 🚀 FULL ENHANCED SEO + SOCIAL MEDIA METADATA */
+const plusJakartaSans = Inter({
+  variable: "--font-body",
+  subsets: ["latin"],
+  preload: false,
+});
+
 export const metadata = {
   title: "Snehashish Mishra | Web Developer Portfolio",
   description:
@@ -49,8 +57,34 @@ export const metadata = {
   publisher: "Snehashish Mishra",
 
   icons: {
-    icon: "/logo_dark.svg",
-    shortcut: "/logo_dark.svg",
+    icon: [
+      {
+        url: "/favicons/favicon.ico",
+        type: "image/x-icon",
+      },
+      {
+        url: "/favicons/favicon-32x32.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+      {
+        url: "/favicons/favicon-16x16.png",
+        sizes: "16x16",
+        type: "image/png",
+      },
+      {
+        url: "/logo_dark.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    shortcut: "logo_dark.svg",
+    apple: [
+      {
+        url: "/favicons/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
   },
 
   openGraph: {
@@ -63,7 +97,7 @@ export const metadata = {
     locale: "en_IN",
     images: [
       {
-        url: "https://snehashish.is-a.dev/og-image.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Snehashish Mishra | Web Developer Portfolio",
@@ -79,7 +113,7 @@ export const metadata = {
       "Discover Snehashish's journey in web development. Clean code, modern design, and creative web experiences.",
     creator: "@snehashish_mishra",
     site: "@snehashish_mishra",
-    images: ["https://snehashish.is-a.dev/og-image.png"],
+    images: ["og-image.png"],
   },
 
   alternates: {
@@ -123,7 +157,9 @@ export default function RootLayout({
       className="dark relative scroll-smooth"
       data-scroll-behavior="smooth"
     >
-      <body className="bg-background text-foreground relative font-sans antialiased">
+      <body
+        className={`${inter.className} ${plusJakartaSans.className} bg-background text-foreground relative font-sans antialiased`}
+      >
         <ThemeProvider>
           <ViewTransitions>
             <Navigation />

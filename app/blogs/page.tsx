@@ -1,16 +1,96 @@
 import { Metadata } from "next";
+import { Geist, Geist_Mono, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Link } from "next-view-transitions";
 
 import Container from "@/components/Container";
 import Heading from "@/components/Heading";
 import Subheading from "@/components/Subheading";
-import { cn } from "@/lib/utils";
 import { getBlogs } from "@/utils/mdx";
 
 export const metadata: Metadata = {
-  title: "All blogs - Tylor Durden",
+  title: "My blogs - Snehashish Mishra",
   description:
-    "A perfects portfolio website template that showcases your skills, minimal and smooth microinteractions, perfect for devlopers and designers",
+    "Explore blog posts by Snehashish Mishra on web development, software engineering, and practical programming tips. Discover insights, tutorials, and real-world solutions for developers and designers.",
+  generator: "Snehashish Mishra",
+  keywords: [
+    "Snehashish Mishra",
+    "Web Developer",
+    "Frontend Developer",
+    "MERN Stack",
+    "Next.js",
+    "React Developer",
+    "Portfolio",
+    "TypeScript",
+    "Framer Motion",
+    "React Motion",
+    " ",
+    "",
+    "JavaScript",
+    "Tailwind CSS",
+    "Cloud Computing",
+    "UI UX Designer",
+    "Blog",
+    "Blogs",
+    "Bloging",
+  ],
+  authors: [
+    {
+      name: "Snehashish Mishra",
+      url: "https://snehashish.is-a.dev/blogs",
+    },
+  ],
+  creator: "Snehashish Mishra",
+  publisher: "Snehashish Mishra",
+
+  icons: {
+    icon: "/logo_dark.svg",
+    shortcut: "/logo_dark.svg",
+  },
+
+  openGraph: {
+    title: "Snehashish Mishra | Web Developer Portfolio",
+    description:
+      "Explore blog posts by Snehashish Mishra on web development, software engineering, and practical programming tips. Discover insights, guides, and real-world solutions for developers and designers.",
+    url: "https://snehashish.is-a.dev/blogs",
+    siteName: "Snehashish Mishra Blogs",
+    type: "website",
+    locale: "en_IN",
+    images: [
+      {
+        url: "https://snehashish.is-a.dev/Images/blog/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Snehashish Mishra | Blogs",
+        type: "image/png",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Snehashish Mishra | Web Developer Portfolio",
+    description:
+      "Explore blog posts by Snehashish Mishra on web development, software engineering, and practical programming tips. Discover insights, guides, and real-world solutions for developers and designers.",
+    creator: "@snehashish_mishra",
+    site: "@snehashish_mishra",
+    images: ["https://snehashish.is-a.dev/Images/blog/og-image.png"],
+  },
+
+  alternates: {
+    canonical: "https://snehashish.is-a.dev/blogs",
+  },
+
+  appleWebApp: {
+    capable: true,
+    title: "Snehashish Mishra Portfolio",
+    statusBarStyle: "black-translucent",
+  },
+
+  formatDetection: {
+    telephone: false,
+    address: false,
+    email: false,
+  },
 };
 
 export default async function BlogsPage() {
@@ -21,10 +101,10 @@ export default async function BlogsPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className={`flex min-h-screen items-center justify-center`}>
       <Container className="min-h-screen px-8 pt-20 pb-10">
-        <Heading>All Blogs</Heading>
-        <Subheading className="text-justify font-semibold">
+        <Heading>My Blogs</Heading>
+        <Subheading>
           I'm a software engineer with passion for building scalable and
           efficient systems. I am currently pursuing MCA at SRM.
         </Subheading>
@@ -39,7 +119,7 @@ export default async function BlogsPage() {
               }}
             >
               <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-                <h2 className="text-primary-blog text-sm font-bold tracking-tight md:text-base">
+                <h2 className="from-primary via-secondary to-primary bg-linear-to-r bg-clip-text text-sm font-bold tracking-tight text-transparent md:text-base">
                   {blog.title}
                 </h2>
                 <p className="text-tertiary-blog hidden text-right text-[0.625rem] font-light md:block md:text-sm">

@@ -23,7 +23,7 @@ const Heading = ({
     >
       <Tag
         className={cn(
-          "text-primary-blog px-4 text-2xl font-bold tracking-tight drop-shadow-lg md:text-4xl",
+          "from-secondary via-primary-blog to-primary bg-linear-to-r bg-clip-text px-4 text-2xl font-bold tracking-tight text-transparent drop-shadow-lg md:text-4xl",
           className,
         )}
       >
