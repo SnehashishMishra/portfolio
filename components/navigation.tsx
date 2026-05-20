@@ -1,5 +1,7 @@
 "use client";
 
+// you miss understood me. The browser shows me "/#hero" which i don't. make i like lend me to "/#hero" but the browser adress should show "/". Example currently it is showing the http://localhost:3000/#hero
+// for the hero section but I want it to show just "/" so the address bar of the browser will look clean but the functionality to scroll back and reach the hero section via navbar should not affect.
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -84,16 +86,17 @@ export default function Navigation() {
    * - If already on home page: smooth-scroll to the section.
    * - If on /blogs (or sub-page): navigate to home, then scroll after mount.
    */
-  const handleSectionNav = (sectionId: string) => {
-    const isOnBlogsPage =
-      pathname === "/blogs" || pathname.startsWith("/blogs/");
+  /** True only when the user is on the home page ("/") */
+  const isHomePage = pathname === "/";
 
-    if (isOnBlogsPage) {
-      // Navigate to home with a hash; the browser + scroll-smooth will handle it
-      router.push(`/#${sectionId}`);
-    } else {
+  const handleSectionNav = (sectionId: string) => {
+    if (isHomePage) {
+      // Already on home — just scroll to the section
       const element = document.getElementById(sectionId);
       element?.scrollIntoView({ behavior: "auto" });
+    } else {
+      // Any other page (blogs, 404, future routes) — navigate to home with hash
+      router.push(`/#${sectionId}`);
     }
   };
 
@@ -126,6 +129,7 @@ export default function Navigation() {
       />
     );
 
+    // Blogs always navigates to /blogs
     if (isBlogs) {
       return (
         <Link
@@ -140,6 +144,23 @@ export default function Navigation() {
       );
     }
 
+    // When NOT on the home page, render a proper Link to /#sectionId so it
+    // works from the 404 page, /blogs, or any future route.
+    if (!isHomePage) {
+      return (
+        <Link
+          key={item}
+          href={`/#${item}`}
+          onClick={() => isMobile && setIsOpen(false)}
+          className={commonClass}
+        >
+          {label}
+          {underline}
+        </Link>
+      );
+    }
+
+    // On the home page — smooth-scroll button (existing behaviour)
     return (
       <button
         key={item}
@@ -167,19 +188,20 @@ export default function Navigation() {
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           {/* LOGO */}
-          <motion.div
-            onClick={() => handleSectionNav("hero")}
-            whileHover={{ scale: 1.05 }}
-            className="cursor-pointer"
+          <Link
+            href={isHomePage ? "#hero" : "/#hero"}
+            onClick={() => isHomePage && handleSectionNav("hero")}
           >
-            <Image
-              src={theme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
-              alt="Logo"
-              width={32}
-              height={32}
-              className="h-8 w-8"
-            />
-          </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} className="cursor-pointer">
+              <Image
+                src={theme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
+                alt="Logo"
+                width={32}
+                height={32}
+                className="h-8 w-8"
+              />
+            </motion.div>
+          </Link>
 
           {/* DESKTOP NAV */}
           <div className="relative hidden gap-8 md:flex">
