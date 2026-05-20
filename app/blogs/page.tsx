@@ -1,97 +1,10 @@
-import { Metadata } from "next";
-import { Geist, Geist_Mono, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Link } from "next-view-transitions";
 
 import Container from "@/components/Container";
 import Heading from "@/components/Heading";
+import JsonLd from "@/components/JsonLd";
 import Subheading from "@/components/Subheading";
 import { getBlogs } from "@/utils/mdx";
-
-export const metadata: Metadata = {
-  title: "My blogs - Snehashish Mishra",
-  description:
-    "Explore blog posts by Snehashish Mishra on web development, software engineering, and practical programming tips. Discover insights, tutorials, and real-world solutions for developers and designers.",
-  generator: "Snehashish Mishra",
-  keywords: [
-    "Snehashish Mishra",
-    "Web Developer",
-    "Frontend Developer",
-    "MERN Stack",
-    "Next.js",
-    "React Developer",
-    "Portfolio",
-    "TypeScript",
-    "Framer Motion",
-    "React Motion",
-    " ",
-    "",
-    "JavaScript",
-    "Tailwind CSS",
-    "Cloud Computing",
-    "UI UX Designer",
-    "Blog",
-    "Blogs",
-    "Bloging",
-  ],
-  authors: [
-    {
-      name: "Snehashish Mishra",
-      url: "https://snehashish.is-a.dev/blogs",
-    },
-  ],
-  creator: "Snehashish Mishra",
-  publisher: "Snehashish Mishra",
-
-  icons: {
-    icon: "/logo_dark.svg",
-    shortcut: "/logo_dark.svg",
-  },
-
-  openGraph: {
-    title: "Snehashish Mishra | Web Developer Portfolio",
-    description:
-      "Explore blog posts by Snehashish Mishra on web development, software engineering, and practical programming tips. Discover insights, guides, and real-world solutions for developers and designers.",
-    url: "https://snehashish.is-a.dev/blogs",
-    siteName: "Snehashish Mishra Blogs",
-    type: "website",
-    locale: "en_IN",
-    images: [
-      {
-        url: "https://snehashish.is-a.dev/Images/blog/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Snehashish Mishra | Blogs",
-        type: "image/png",
-      },
-    ],
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    title: "Snehashish Mishra | Web Developer Portfolio",
-    description:
-      "Explore blog posts by Snehashish Mishra on web development, software engineering, and practical programming tips. Discover insights, guides, and real-world solutions for developers and designers.",
-    creator: "@snehashish_mishra",
-    site: "@snehashish_mishra",
-    images: ["https://snehashish.is-a.dev/Images/blog/og-image.png"],
-  },
-
-  alternates: {
-    canonical: "https://snehashish.is-a.dev/blogs",
-  },
-
-  appleWebApp: {
-    capable: true,
-    title: "Snehashish Mishra Portfolio",
-    statusBarStyle: "black-translucent",
-  },
-
-  formatDetection: {
-    telephone: false,
-    address: false,
-    email: false,
-  },
-};
 
 export default async function BlogsPage() {
   const allBlogs = await getBlogs();
@@ -100,8 +13,55 @@ export default async function BlogsPage() {
     return str.length > length ? str.substring(0, length) + "..." : str;
   };
 
+  // JSON-LD: CollectionPage + BreadcrumbList for Google Rich Results
+  const blogsSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Blogs | Snehashish Mishra",
+    description:
+      "Technical blog posts by Snehashish Mishra on web development, Next.js, React, TypeScript, and modern software engineering.",
+    url: "https://snehashish.is-a.dev/blogs",
+    author: {
+      "@type": "Person",
+      name: "Snehashish Mishra",
+      url: "https://snehashish.is-a.dev",
+    },
+    hasPart: allBlogs.map((blog) => ({
+      "@type": "BlogPosting",
+      headline: blog.title,
+      description: blog.description,
+      url: `https://snehashish.is-a.dev/blogs/${blog.slug}`,
+      datePublished: blog.date,
+      author: {
+        "@type": "Person",
+        name: "Snehashish Mishra",
+      },
+    })),
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://snehashish.is-a.dev",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blogs",
+        item: "https://snehashish.is-a.dev/blogs",
+      },
+    ],
+  };
+
   return (
     <div className={`flex min-h-screen items-center justify-center`}>
+      <JsonLd data={blogsSchema} />
+      <JsonLd data={breadcrumbSchema} />
       <Container className="min-h-screen px-8 pt-20 pb-10">
         <Heading>My Blogs</Heading>
         <Subheading>

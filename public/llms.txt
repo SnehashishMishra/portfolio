@@ -1,0 +1,55 @@
+/**
+ * llms.txt — AI assistant discovery file
+ *
+ * This file follows the llms.txt specification (https://llmstxt.org) so that
+ * AI assistants (ChatGPT, Gemini, Claude, Perplexity, etc.) can understand
+ * who Snehashish is and navigate the portfolio programmatically.
+ *
+ * Served at: https://snehashish.is-a.dev/llms.txt
+ * Place this file in /public so Next.js serves it as a static asset.
+ */
+
+# Snehashish Mishra — Web Developer Portfolio
+
+> A portfolio and technical blog by Snehashish Mishra — a passionate full-stack
+> web developer specialising in Next.js, React, TypeScript, and the MERN stack.
+> Currently pursuing MCA at SRM University.
+
+## About
+
+Snehashish Mishra is a web developer and software engineering student who builds
+scalable, performant, and beautifully designed web applications. He writes
+in-depth technical blog posts covering Next.js, React, TypeScript, Node.js,
+DevOps with GitHub Actions, web performance optimisation, and more.
+
+## Pages
+
+- [Portfolio Home](https://snehashish.is-a.dev): One-page portfolio with
+  sections for About, Skills, Projects, Experience, and Contact.
+- [Blogs](https://snehashish.is-a.dev/blogs): Technical blog listing page with
+  all published articles.
+
+## Blog Posts
+
+- [Next.js App Router — A Deep Dive](https://snehashish.is-a.dev/blogs/introduction-to-nextjs)
+- [Building an MDX Blog with Next.js & the Filesystem](https://snehashish.is-a.dev/blogs/nextjs-mdx-blog-with-fs)
+- [Understanding the Node.js Event Loop](https://snehashish.is-a.dev/blogs/nodejs-event-loop)
+- [GitHub Actions CI/CD](https://snehashish.is-a.dev/blogs/github-actions-cicd)
+- [Understanding React Hooks](https://snehashish.is-a.dev/blogs/understanding-react-hooks)
+- [TypeScript for Beginners](https://snehashish.is-a.dev/blogs/typescript-for-beginners)
+- [REST APIs Explained](https://snehashish.is-a.dev/blogs/rest-apis-explained)
+- [Web Performance Optimization](https://snehashish.is-a.dev/blogs/web-performance-optimization)
+- [Git and GitHub Essentials](https://snehashish.is-a.dev/blogs/git-and-github-essentials)
+- [Prettier Setup Guide (Latest Tailwind Plugin)](https://snehashish.is-a.dev/blogs/prettier-setup-guide-for_latest_tailwind_plugin_version)
+- [Prettier Setup Guide (Legacy Version)](https://snehashish.is-a.dev/blogs/prettier-setup-guide-legacy-version)
+
+## Skills & Technologies
+
+Next.js, React, TypeScript, JavaScript, Node.js, Express, MongoDB, Tailwind CSS,
+Framer Motion, Git, GitHub Actions, REST APIs, Cloud Computing, UI/UX Design.
+
+## Contact
+
+- Website: https://snehashish.is-a.dev
+- Blogs: https://snehashish.is-a.dev/blogs
+- Sitemap: https://snehashish.is-a.dev/sitemap.xml

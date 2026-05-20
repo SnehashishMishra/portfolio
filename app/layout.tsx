@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { ViewTransitions } from "next-view-transitions";
 
 import { ThemeProvider } from "@/components/theme-provider";
+import JsonLd from "@/components/JsonLd";
 
 // @ts-ignore: CSS module declarations not found
 import "./globals.css";
@@ -25,6 +26,12 @@ const plusJakartaSans = Inter({
 });
 
 export const metadata = {
+  // metadataBase is required for Next.js to resolve all relative image paths
+  // (openGraph.images, twitter.images, icons) into absolute URLs.
+  // Without this, social crawlers (Facebook, Twitter, LinkedIn, Slack) receive
+  // relative paths that resolve to localhost and link previews break completely.
+  metadataBase: new URL("https://snehashish.is-a.dev"),
+
   title: "Snehashish Mishra | Web Developer Portfolio",
   description:
     "Explore the portfolio of Snehashish Mishra — a passionate Web Developer skilled in MERN stack, Next.js, and modern UI/UX design. Let's build something amazing together!",
@@ -39,9 +46,6 @@ export const metadata = {
     "Portfolio",
     "TypeScript",
     "Framer Motion",
-    "React Motion",
-    " ",
-    "",
     "JavaScript",
     "Tailwind CSS",
     "Cloud Computing",
@@ -113,7 +117,7 @@ export const metadata = {
       "Discover Snehashish's journey in web development. Clean code, modern design, and creative web experiences.",
     creator: "@snehashish_mishra",
     site: "@snehashish_mishra",
-    images: ["og-image.png"],
+    images: ["/og-image.png"],
   },
 
   alternates: {
@@ -145,6 +149,59 @@ export const viewport = {
   ],
 };
 
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Snehashish Mishra",
+  url: "https://snehashish.is-a.dev",
+  image: "https://snehashish.is-a.dev/og-image.png",
+  sameAs: [
+    "https://github.com/snehashish-mishra",
+    "https://twitter.com/snehashish_mishra",
+    "https://linkedin.com/in/snehashish-mishra",
+  ],
+  jobTitle: "Web Developer",
+  description:
+    "Passionate full-stack web developer specialising in Next.js, React, TypeScript, and the MERN stack. Currently pursuing MCA at SRM University.",
+  knowsAbout: [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "JavaScript",
+    "Node.js",
+    "MongoDB",
+    "Tailwind CSS",
+    "Web Development",
+    "Software Engineering",
+    "UI/UX Design",
+  ],
+  alumniOf: {
+    "@type": "CollegeOrUniversity",
+    name: "SRM Institute of Science and Technology",
+  },
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Snehashish Mishra Portfolio",
+  url: "https://snehashish.is-a.dev",
+  description:
+    "Portfolio and technical blog of Snehashish Mishra — a web developer writing about Next.js, React, TypeScript, and modern web development.",
+  author: {
+    "@type": "Person",
+    name: "Snehashish Mishra",
+  },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: "https://snehashish.is-a.dev/blogs?q={search_term_string}",
+    },
+    "query-input": "required name=search_term_string",
+  },
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -160,6 +217,8 @@ export default function RootLayout({
       <body
         className={`${inter.className} ${plusJakartaSans.className} bg-background text-foreground relative font-sans antialiased`}
       >
+        <JsonLd data={personSchema} />
+        <JsonLd data={websiteSchema} />
         <ThemeProvider>
           <ViewTransitions>
             <Navigation />
