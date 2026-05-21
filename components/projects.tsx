@@ -5,6 +5,12 @@ import { ExternalLink, Github } from "lucide-react";
 import { motion, Variants } from "motion/react";
 import { useInView } from "react-intersection-observer";
 
+// Images
+import ecommerceLandingPage from "@/public/ecommerce-landing-page.png";
+import enotesLandingPage from "@/public/enotes-landing-page.png";
+import ethermlLandingPage from "@/public/etherml-landing-page.png";
+import melodypassLandingPage from "@/public/melodypass-landing-page.png";
+
 export default function Projects() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
   const MotionImage = motion.create(Image);
@@ -15,7 +21,7 @@ export default function Projects() {
       description:
         "A full-stack machine learning platform where users upload datasets, automatically train multiple models, compare results in real time, and download the best performing model through an interactive dashboard.",
       tech: ["Next.js", "FastAPI", "Python", "Scikit-learn", "MongoDB"],
-      image: "/etherml-landing-page.png",
+      image: ethermlLandingPage,
       github: "https://github.com/SnehashishMishra/MLModels-frontend",
       demo: "https://etherml.vercel.app",
     },
@@ -23,17 +29,36 @@ export default function Projects() {
       title: "E-Notes App",
       description:
         "A modern note-taking application with real-time synchronization, cloud storage, and rich text editing capabilities.",
-      tech: ["React", "MongoDB", "Express.JS", "Tailwind CSS"],
-      image: "/enotes-landing-page.png",
+      tech: ["React", "Express.JS", "MongoDB", "Tailwind CSS"],
+      image: enotesLandingPage,
       github: "https://github.com/SnehashishMishra/eNotes",
       demo: "https://enotesapp.vercel.app",
+    },
+    {
+      title: "Melody Pass",
+      description:
+        "A modern digital ticketing platform for live music events with interactive seat selection, secure booking, QR-based ticket verification, and role-based event management.",
+      tech: [
+        "Next.js",
+        "TypeScript",
+        "Flask",
+        "MongoDB",
+        "Tailwind CSS",
+        "RESTful APIs",
+        "JWT",
+        "QR Code Verification",
+        "PDF Generation",
+      ],
+      image: melodypassLandingPage,
+      github: "https://github.com/SnehashishMishra/melodypass-frontend",
+      demo: "https://melodypass.vercel.app",
     },
     {
       title: "E-Commerce Website",
       description:
         "Full-stack e-commerce platform built with MERN stack. Features product browsing, shopping cart, secure checkout, and admin dashboard.",
       tech: ["Next.js", "Node.js", "MongoDB", "Stripe", "Redux"],
-      image: "/ecommerce-landing-page.png",
+      image: ecommerceLandingPage,
       github: "https://github.com/SnehashishMishra/annapurna_agency",
       demo: "https://annapurnaagency.vercel.app",
     },
@@ -93,6 +118,7 @@ export default function Projects() {
                     alt={project.title}
                     width={1200}
                     height={630}
+                    placeholder="blur"
                     className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   <div className="from-background/80 absolute inset-0 bg-linear-to-t to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
