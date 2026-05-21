@@ -1,7 +1,5 @@
 "use client";
 
-// you miss understood me. The browser shows me "/#hero" which i don't. make i like lend me to "/#hero" but the browser adress should show "/". Example currently it is showing the http://localhost:3000/#hero
-// for the hero section but I want it to show just "/" so the address bar of the browser will look clean but the functionality to scroll back and reach the hero section via navbar should not affect.
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -74,12 +72,34 @@ export default function Navigation() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [pathname]);
 
-  // Also track scrolled state on blogs pages
+  // Track scrolled state on all pages
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // On arriving at "/", poll sessionStorage for a scroll target
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const target = sessionStorage.getItem("scrollTarget");
+    if (!target) return;
+    sessionStorage.removeItem("scrollTarget");
+
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      const el = document.getElementById(target);
+      if (el) {
+        clearInterval(interval);
+        el.scrollIntoView({ behavior: "smooth" });
+      } else if (attempts >= 20) {
+        clearInterval(interval);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [pathname]);
 
   /**
    * Handles navigation for non-blog items.
@@ -93,10 +113,12 @@ export default function Navigation() {
     if (isHomePage) {
       // Already on home — just scroll to the section
       const element = document.getElementById(sectionId);
-      element?.scrollIntoView({ behavior: "auto" });
+      element?.scrollIntoView({ behavior: "smooth" });
     } else {
-      // Any other page (blogs, 404, future routes) — navigate to home with hash
-      router.push(`/#${sectionId}`);
+      // Any other page — store target in sessionStorage, navigate to "/"
+      // This keeps the address bar clean (no /#hash)
+      sessionStorage.setItem("scrollTarget", sectionId);
+      router.push("/");
     }
   };
 
@@ -144,19 +166,21 @@ export default function Navigation() {
       );
     }
 
-    // When NOT on the home page, render a proper Link to /#sectionId so it
-    // works from the 404 page, /blogs, or any future route.
+    // When NOT on the home page, use a button that navigates via sessionStorage
+    // so the URL stays clean (no /#hash)
     if (!isHomePage) {
       return (
-        <Link
+        <button
           key={item}
-          href={`/#${item}`}
-          onClick={() => isMobile && setIsOpen(false)}
+          onClick={() => {
+            handleSectionNav(item);
+            if (isMobile) setIsOpen(false);
+          }}
           className={commonClass}
         >
           {label}
           {underline}
-        </Link>
+        </button>
       );
     }
 
@@ -188,9 +212,9 @@ export default function Navigation() {
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           {/* LOGO */}
-          <Link
-            href={isHomePage ? "#hero" : "/#hero"}
-            onClick={() => isHomePage && handleSectionNav("hero")}
+          <button
+            onClick={() => handleSectionNav("hero")}
+            className="cursor-pointer"
           >
             <motion.div whileHover={{ scale: 1.05 }} className="cursor-pointer">
               <Image
@@ -201,7 +225,7 @@ export default function Navigation() {
                 className="h-8 w-8"
               />
             </motion.div>
-          </Link>
+          </button>
 
           {/* DESKTOP NAV */}
           <div className="relative hidden gap-8 md:flex">
