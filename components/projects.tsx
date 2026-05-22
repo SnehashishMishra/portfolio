@@ -5,11 +5,11 @@ import { ExternalLink, Github } from "lucide-react";
 import { motion, Variants } from "motion/react";
 import { useInView } from "react-intersection-observer";
 
+import enotesLandingPage from "@/public//Images/projects/enotes-landing-page.png";
+import ethermlLandingPage from "@/public//Images/projects/etherml-landing-page.png";
+import melodypassLandingPage from "@/public//Images/projects/melodypass-landing-page.png";
 // Images
-import ecommerceLandingPage from "@/public/ecommerce-landing-page.png";
-import enotesLandingPage from "@/public/enotes-landing-page.png";
-import ethermlLandingPage from "@/public/etherml-landing-page.png";
-import melodypassLandingPage from "@/public/melodypass-landing-page.png";
+import ecommerceLandingPage from "@/public/Images/projects/ecommerce-landing-page.png";
 
 export default function Projects() {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });

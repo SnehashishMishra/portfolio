@@ -124,7 +124,7 @@ export default function Navigation() {
 
   const downloadResume = () => {
     const link = document.createElement("a");
-    link.href = "/resume-snehashish.pdf";
+    link.href = "/resume/resume-snehashish.pdf";
     link.download = "Snehashish_Resume.pdf";
     document.body.appendChild(link);
     link.click();
