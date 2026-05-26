@@ -6,6 +6,7 @@ import { TypeAnimation } from "react-type-animation";
 
 import { useTheme } from "@/components/theme-provider";
 
+import { LiquidButton } from "./button/LiquidButton";
 import Particles from "./Particles";
 
 export default function Hero() {
@@ -127,7 +128,22 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="mt-12 mb-7 flex flex-col justify-center gap-12 sm:mb-12 sm:flex-row"
         >
-          <motion.button
+          <div
+            style={{
+              boxShadow: "0 0 20px rgba(6, 182, 212, 0.4)",
+              borderRadius: "100%",
+            }}
+          >
+            <LiquidButton
+              color="from-primary to-secondary cursor-pointer bg-linear-to-r"
+              textColor="text-primary-foreground"
+              buttonClassName="px-6 py-2 font-semibold transition-all rounded-full sm:px-8 rounded-full sm:py-3 "
+              onClick={scrollToProjects}
+            >
+              Explore My Work
+            </LiquidButton>
+          </div>
+          {/* <motion.button
             onClick={scrollToProjects}
             whileHover={{
               scale: 1.03,
@@ -138,7 +154,7 @@ export default function Hero() {
             className="from-primary to-secondary text-primary-foreground cursor-pointer rounded-full bg-linear-to-r px-6 py-2 font-semibold transition-all hover:shadow-lg sm:px-8 sm:py-3"
           >
             Explore My Work
-          </motion.button>
+          </motion.button> */}
 
           <motion.div
             variants={itemVariants}
