@@ -4,8 +4,15 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Download, Menu, Moon, Sun, X } from "lucide-react";
-import { motion } from "motion/react";
+import {
+  motion,
+  useMotionTemplate,
+  useScroll,
+  useTransform,
+} from "motion/react";
 import { Link } from "next-view-transitions";
+
+import { cn } from "@/lib/utils";
 
 import { useTheme } from "./theme-provider";
 
@@ -200,15 +207,31 @@ export default function Navigation() {
     );
   };
 
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 60], [0, 10]);
+  const marginLeft = useTransform(scrollY, [0, 60], ["0px", "10px"]);
+  const marginRight = useTransform(scrollY, [0, 60], ["0px", "10px"]);
+  const borderRadius = useTransform(scrollY, [0, 60], ["0px", "100px"]);
+  const blurValue = useTransform(scrollY, [0, 60], [0, 12]);
+  const filter = useMotionTemplate`blur(${blurValue}px)`;
+
   return (
     <>
       {/* ✅ Main Navbar */}
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-background/80 backdrop-blur-lg" : "bg-transparent"
-        }`}
+        style={{
+          y,
+          marginLeft,
+          marginRight,
+          borderRadius,
+          backdropFilter: filter,
+        }}
+        className={cn(
+          `duration-300, fixed top-0 right-0 left-0 z-50 transition-all`,
+          ` ${isScrolled ? "bg-background/60" : "bg-transparent"}`,
+        )}
       >
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           {/* LOGO */}
