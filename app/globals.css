@@ -237,6 +237,14 @@
   }
 }
 
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @utility motion-bg {
   background-color: transparent !important;
   background-image: radial-gradient(transparent 1px, #000 1px) !important;
