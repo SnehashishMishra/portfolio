@@ -211,7 +211,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className="dark relative scroll-smooth"
+      className="dark relative scroll-smooth no-scrollbar"
       data-scroll-behavior="smooth"
     >
       <body
