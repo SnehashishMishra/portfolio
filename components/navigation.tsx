@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { Download, Menu, Moon, Sun, X } from "lucide-react";
@@ -33,6 +33,16 @@ export default function Navigation() {
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
+
+  // Track whether viewport is at or above Tailwind's md breakpoint (768px)
+  const [isMd, setIsMd] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    setIsMd(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMd(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
 
   // Lock/unlock body scroll when mobile menu is open
   useEffect(() => {
@@ -212,6 +222,7 @@ export default function Navigation() {
   const marginLeft = useTransform(scrollY, [0, 60], ["0px", "10px"]);
   const marginRight = useTransform(scrollY, [0, 60], ["0px", "10px"]);
   const borderRadius = useTransform(scrollY, [0, 60], ["0px", "100px"]);
+  const borderWidth = useTransform(scrollY, [0, 60], [0, 2]);
   const blurValue = useTransform(scrollY, [0, 60], [0, 12]);
   const filter = useMotionTemplate`blur(${blurValue}px)`;
 
@@ -222,18 +233,19 @@ export default function Navigation() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         style={{
-          y,
-          marginLeft,
-          marginRight,
-          borderRadius,
+          y: isMd ? 0 : y,
+          marginLeft: isMd ? 0 : marginLeft,
+          marginRight: isMd ? 0 : marginRight,
+          borderRadius: isMd ? 0 : borderRadius,
+          borderWidth: isMd ? 0 : borderWidth,
           backdropFilter: filter,
         }}
         className={cn(
-          `duration-300, fixed top-0 right-0 left-0 z-50 transition-all`,
+          `duration-300, border-accent/20 fixed top-0 right-0 left-0 z-50 transition-all md:border-0`,
           ` ${isScrolled ? "bg-background/60" : "bg-transparent"}`,
         )}
       >
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-10">
           {/* LOGO */}
           <button
             onClick={() => handleSectionNav("hero")}
